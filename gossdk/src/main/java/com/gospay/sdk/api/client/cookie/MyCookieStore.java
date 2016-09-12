@@ -3,6 +3,7 @@ package com.gospay.sdk.api.client.cookie;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.gospay.sdk.api.ServerApi;
 import com.gospay.sdk.storage.GosStorage;
 
 import java.net.CookieStore;
@@ -26,6 +27,8 @@ public class MyCookieStore implements CookieStore {
      * The memory storage of the cookies
      */
     private Map<URI, List<HttpCookie>> mapCookies = new HashMap<URI, List<HttpCookie>>();
+
+    URI serverURI = URI.create(ServerApi.BACKEND_URL);
     /*
      * The instance of the shared preferences
      */
@@ -39,17 +42,19 @@ public class MyCookieStore implements CookieStore {
         System.out.println("add");
         System.out.println(cookie.toString());
 
-        List<HttpCookie> cookies = mapCookies.get(uri);
+
+
+        List<HttpCookie> cookies = mapCookies.get(serverURI);
         if (cookies == null) {
             cookies = new ArrayList<HttpCookie>();
-            mapCookies.put(uri, cookies);
+            mapCookies.put(serverURI, cookies);
         }
         cookies.add(cookie);
 
         SharedPreferences.Editor ediWriter = spePreferences.edit();
         HashSet<String> setCookies = new HashSet<String>();
         setCookies.add(cookie.toString());
-        ediWriter.putStringSet(uri.toString(), spePreferences.getStringSet(uri.toString(), setCookies));
+        ediWriter.putStringSet(serverURI.toString(), spePreferences.getStringSet(serverURI.toString(), setCookies));
         ediWriter.commit();
 
     }
@@ -114,12 +119,12 @@ public class MyCookieStore implements CookieStore {
      */
     public List<HttpCookie> get(URI uri) {
 
-        List<HttpCookie> lstCookies = mapCookies.get(uri);
+        List<HttpCookie> lstCookies = mapCookies.get(serverURI);
 
         if (lstCookies == null)
-            mapCookies.put(uri, new ArrayList<HttpCookie>());
+            mapCookies.put(serverURI, new ArrayList<HttpCookie>());
 
-        return mapCookies.get(uri);
+        return mapCookies.get(serverURI);
 
     }
 

@@ -62,7 +62,7 @@ public final class GosSdkManager {
         ourInstance = new GosSdkManager(context);
         Logger.DEBUG = setupDebug;
         Logger.LOGD("Config from SDK "+BuildConfig.APPLICATION_ID);
-        return ourInstance;
+         return ourInstance;
     }
 
     public static GosSdkManager getInstance() {

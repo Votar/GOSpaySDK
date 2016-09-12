@@ -84,6 +84,7 @@ public final class GosNetworkManager {
 
         cookieManager = new CookieManager(new MyCookieStore(context), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
+//        cookieManager.getCookieStore().removeAll();
     }
 
     private GosNetworkManager(Context context, boolean isDebug) {
