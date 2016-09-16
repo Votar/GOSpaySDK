@@ -1,6 +1,5 @@
 package com.gospay.sdk;
 
-import com.gospay.sdk.api.parsers.GetCardListParser;
 import com.gospay.sdk.api.response.models.messages.card.CardView;
 import static org.junit.Assert.*;
 import org.junit.Before;
@@ -35,19 +34,6 @@ public class GetCardListResponseParserUnitTest {
     }
     @Test
     public void testParserOkResponse() throws Exception{
-
-        ArrayList<CardView> list = GetCardListParser.parse(validArray);
-        assertEquals(list.size(), 2);
-        CardView cardView = list.get(0);
-        assertEquals(cardView.getCardId(), "550e8400-e29b-41d4-a716-446655440000");
-        assertEquals(cardView.getCardMask(), "4111********1111");
-        assertEquals(cardView.getAlias(), "Corporate_card");
-
-
-        assertNotNull(cardView.getCardId());
-        assertNotNull(cardView.getCardMask());
-        assertNotNull(cardView.getAlias());
-
 
     }
 }

@@ -16,10 +16,10 @@ public class ExpireDateModel {
     public static ExpireDateModel create(String monoString) {
 
         if (com.gospay.sdk.util.TextUtils.isEmpty(monoString))
-            throw new GosSdkException("String for expire date couldn't be empty", null);
+            throw new GosSdkException("String for expire date couldn't be empty");
 
         if (monoString.length() != 4) {
-            throw new GosSdkException(String.format("Invalid expire date %1s", monoString), null);
+            throw new GosSdkException(String.format("Invalid expire date %1s", monoString));
         }
         String expireMonth = monoString.substring(0, 2);
         String expireYear = monoString.substring(2, 4);
@@ -27,7 +27,7 @@ public class ExpireDateModel {
         if (CreditCardValidator.isExpireDateValid(expireMonth, expireYear))
             return new ExpireDateModel(expireMonth, expireYear);
         else
-            throw new GosSdkException(String.format("Invalid expire date %1s / %2s", expireMonth, expireYear), null);
+            throw new GosSdkException(String.format("Invalid expire date %1s / %2s", expireMonth, expireYear));
     }
 
     public ExpireDateModel(String expireMonth, String expireYear) {

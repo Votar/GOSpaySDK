@@ -1,4 +1,4 @@
-package com.gospay.sdk.api.response.models.messages.payment;
+package com.gospay.sdk.api;
 
 /**
  * Created by bertalt on 08.09.16.

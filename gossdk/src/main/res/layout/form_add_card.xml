@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_add_card_form"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/dialog_add_card_label_card_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:nextFocusDown="@+id/dialog_add_card_edit_month"
+            android:text="@string/text_card_number"
+            android:textSize="@dimen/text_size_card_small" />
+
+        <com.gospay.sdk.ui.view.GosEditNumber
+            android:id="@+id/dialog_add_card_edit_card_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:inputType="phone"
+            android:maxLength="@integer/max_length_card_number"
+            android:textSize="@dimen/tsize_card_big"
+            android:theme="@android:style/Widget.EditText" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dialog_add_card_label_expire_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:gravity="right"
+                android:text="@string/text_expiry_date"
+                android:textSize="@dimen/text_size_card_small" />
+
+            <EditText
+                android:id="@+id/dialog_add_card_edit_month"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:inputType="number"
+                android:maxLength="2"
+                android:nextFocusDown="@+id/dialog_add_card_edit_year" />
+
+            <EditText
+                android:id="@+id/dialog_add_card_edit_year"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:inputType="number"
+                android:maxLength="2"
+                android:nextFocusDown="@+id/dialog_add_card_edit_cvv" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/dialog_add_card_label_cvv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="@integer/max_length_date"
+                android:gravity="right"
+                android:text="@string/text_cvv"
+                android:textSize="@dimen/text_size_card_small" />
+
+            <EditText
+                android:id="@+id/dialog_add_card_edit_cvv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:inputType="number"
+                android:maxLength="@integer/max_length_cvv"
+                android:nextFocusDown="@+id/dialog_add_card_edit_alias" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/dialog_add_card_label_alias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/text_alias"
+                android:textSize="@dimen/text_size_card_small" />
+
+            <EditText
+                android:id="@+id/dialog_add_card_edit_alias"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:inputType="textAutoCorrect"
+                android:nextFocusDown="@+id/edit_year" />
+
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

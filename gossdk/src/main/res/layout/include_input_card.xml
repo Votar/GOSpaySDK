@@ -28,7 +28,7 @@
                 android:layout_marginBottom="3dp"
                 android:text="@string/text_card_number"
                 android:textColor="#D5DEEA"
-                android:textSize="@dimen/tsize_card_small"/>
+                android:textSize="@dimen/text_size_card_small"/>
 
             <EditText
                 android:id="@+id/edit_card_number"
@@ -51,7 +51,7 @@
                 android:gravity="center_vertical"
                 android:text="@string/text_expiry_date"
                 android:textColor="#D5DEEA"
-                android:textSize="@dimen/tsize_card_small"/>
+                android:textSize="@dimen/text_size_card_small"/>
 
             <EditText
                 android:id="@+id/edit_month"
@@ -120,10 +120,5 @@
                 android:maxLength="3"/>
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/btn_get_card_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GET CARD LIST"/>
     </LinearLayout>
 </ScrollView>

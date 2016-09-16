@@ -29,7 +29,7 @@ public final class GosStorage {
     public static GosStorage getInstance() {
 
         if(ourInstance == null)
-            throw new GosSdkException("You try to get instance of SDK storage before create()", null);
+            throw new GosSdkException("You try to get instance of SDK storage before create()");
 
         return ourInstance;
     }
@@ -62,21 +62,21 @@ public final class GosStorage {
 
         }
         if(TextUtils.isEmpty(mApiKey))
-            throw new GosSdkException("Cannot find GOS API_KEY ", null);
+            throw new GosSdkException("Cannot find GOS API_KEY ");
 
         return mApiKey;
     }
 
 
     /**
-     *Method used to save CardReference to internal storage
+     *
      * @param cardId
      * @param cvv
      * @return true if result success
      */
     public boolean addCardWithCvv(int cardId, String cvv){
 
-        if(prefStorage == null) throw new GosSdkException("Storage is null", null);
+        if(prefStorage == null) throw new GosSdkException("Storage is null");
 
         return prefStorage.edit().putString(String.valueOf(cardId), cvv).commit();
 
@@ -84,7 +84,7 @@ public final class GosStorage {
 
     public String getCvvByCardId(int cardId){
 
-        if(prefStorage == null) throw new GosSdkException("Storage is null", null);
+        if(prefStorage == null) throw new GosSdkException("Storage is null");
 
         String cvv = prefStorage.getString(String.valueOf(cardId), DEFAULT_ID);
 
@@ -102,7 +102,7 @@ public final class GosStorage {
      */
     public void clear() {
 
-        if(prefStorage == null) throw new GosSdkException("Storage is null", null);
+        if(prefStorage == null) throw new GosSdkException("Storage is null");
 
         prefStorage.edit().clear().apply();
 

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="tsize_card_big">18sp</dimen>
+    <dimen name="tsize_card_normal">16sp</dimen>
+    <dimen name="text_size_card_small">10sp</dimen>
+
+    <dimen name="dialog_content_padding">16dp</dimen>
+
+    <dimen name="add_card_dialog_width">260dp</dimen>
+    <dimen name="add_card_dialog_height">160dp</dimen>
+    <dimen name="padding_content_card">16dp</dimen>
+    <dimen name="dialog_payment_matging_currency">4dp</dimen>
+</resources>

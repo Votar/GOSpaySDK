@@ -42,7 +42,9 @@ public class MyCookieStore implements CookieStore {
         System.out.println("add");
         System.out.println(cookie.toString());
 
+        mapCookies = new HashMap<>();
 
+        SharedPreferences.Editor ediWriter = spePreferences.edit();
 
         List<HttpCookie> cookies = mapCookies.get(serverURI);
         if (cookies == null) {
@@ -51,10 +53,12 @@ public class MyCookieStore implements CookieStore {
         }
         cookies.add(cookie);
 
-        SharedPreferences.Editor ediWriter = spePreferences.edit();
+
         HashSet<String> setCookies = new HashSet<String>();
         setCookies.add(cookie.toString());
-        ediWriter.putStringSet(serverURI.toString(), spePreferences.getStringSet(serverURI.toString(), setCookies));
+        ediWriter
+        .clear()
+        .putStringSet(serverURI.toString(), spePreferences.getStringSet(serverURI.toString(), setCookies));
         ediWriter.commit();
 
     }

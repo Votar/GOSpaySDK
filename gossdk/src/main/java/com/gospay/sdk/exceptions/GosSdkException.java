@@ -5,7 +5,7 @@ package com.gospay.sdk.exceptions;
  */
 public class GosSdkException extends RuntimeException {
 
-    public GosSdkException(String message, Throwable throwable) {
-        super(message, throwable);
+    public GosSdkException(String message) {
+        super(message);
     }
 }

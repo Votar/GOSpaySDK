@@ -1,11 +1,14 @@
 package com.gospay.sdk.api.client;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 import com.gospay.sdk.api.ServerApi;
-import com.gospay.sdk.api.response.listeners.GosResponseCallback;
+import com.gospay.sdk.api.listeners.GosResponseCallback;
 import com.gospay.sdk.api.response.models.GosResponse;
+import com.gospay.sdk.ui.UiUtil;
 import com.gospay.sdk.util.Logger;
 
 import java.io.BufferedReader;
@@ -13,7 +16,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Arrays;
@@ -26,16 +28,21 @@ import java.util.Map;
 public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
 
     private GosResponseCallback listener;
+    private ProgressDialog progressDialog;
 
     public AsyncHttpClient(GosResponseCallback listener) {
         this.listener = listener;
     }
+    public AsyncHttpClient(Context context, GosResponseCallback listener) {
+        this(listener);
+        progressDialog = UiUtil.getDefaultProgressDialog(context);
+    }
+
 
     @Override
     protected GosResponse doInBackground(GosRequest... params) {
 
         for (GosRequest request : params) {
-
             Logger.LOGNET("init request: " + request.toString());
         }
 
@@ -53,12 +60,18 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
     protected void onPreExecute() {
         super.onPreExecute();
 
+        if(progressDialog !=null)
+            progressDialog.show();
 
     }
 
     @Override
     protected void onPostExecute(GosResponse gosResponse) {
         super.onPostExecute(gosResponse);
+
+        if(progressDialog !=null)
+            progressDialog.dismiss();
+
         listener.onProcessFinished(gosResponse);
     }
 
@@ -94,6 +107,8 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
         return response;
     }
 
+
+
     private GosResponse callPost(GosRequest request) {
 
         byte[] postData = new byte[0];
@@ -120,6 +135,7 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
             conn.setUseCaches(false);
 
             wr = new DataOutputStream(conn.getOutputStream());
+
             wr.write(postData);
             wr.flush();
             response = listenToServer(conn);
@@ -127,6 +143,7 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
 
         } catch (IOException e1) {
             e1.printStackTrace();
+            return null;
         } finally {
             try {
                 if (wr != null)
@@ -157,7 +174,9 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
 
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
+            return null;
+        }
+        finally {
             try {
                 if (reader != null) {
                     reader.close();

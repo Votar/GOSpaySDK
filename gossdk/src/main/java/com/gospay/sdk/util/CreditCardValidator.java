@@ -50,6 +50,39 @@ public class CreditCardValidator {
         return true;
     }
 
+    public static boolean isExpireYearValid(String expireYear){
+
+        if (TextUtils.isEmpty(expireYear)){
+            return false;
+        }
+        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+        int currentYear = calendar.get(Calendar.YEAR) - 2000;
+        int iExpireYear = Integer.valueOf(expireYear);
+
+        if (currentYear > iExpireYear)
+            return false;
+
+        return true;
+    }
+
+    public static boolean isExpireMonthValid(String expireMonth){
+
+        if (TextUtils.isEmpty(expireMonth)){
+            return false;
+        }
+
+        Calendar calendar = Calendar.getInstance(Locale.ENGLISH);
+
+        int currentMonth = calendar.get(Calendar.MONTH) + 1;
+
+        int iExpireMonth = Integer.valueOf(expireMonth);
+
+        if(iExpireMonth <1 || iExpireMonth >12)
+            return false;
+
+        return true;
+    }
+
     public static boolean isCvvValid(@NonNull String cvv){
 
         if(TextUtils.isEmpty(cvv)) return false;

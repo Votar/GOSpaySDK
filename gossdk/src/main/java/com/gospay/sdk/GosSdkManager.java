@@ -1,35 +1,37 @@
 package com.gospay.sdk;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 
 import com.gospay.sdk.api.GosNetworkManager;
+import com.gospay.sdk.api.listeners.GosSelectCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
-import com.gospay.sdk.api.request.models.card.CardReference;
+import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
-import com.gospay.sdk.api.response.listeners.GosAddCardListener;
-import com.gospay.sdk.api.response.listeners.GosConfirmationPaymentListener;
-import com.gospay.sdk.api.response.listeners.GosGetCardListListener;
-import com.gospay.sdk.api.response.listeners.GosGetPaymentStatusListener;
-import com.gospay.sdk.api.response.listeners.GosInitPaymentListener;
-import com.gospay.sdk.api.response.listeners.GosResponseListener;
-import com.gospay.sdk.api.response.models.GosResponse;
+import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
+import com.gospay.sdk.api.listeners.GosAddCardListener;
+import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
+import com.gospay.sdk.api.listeners.GosGetCardListListener;
+import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
+import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.response.models.messages.card.CardView;
-import com.gospay.sdk.api.response.models.messages.payment.confirm.ConfirmedPayment;
-import com.gospay.sdk.api.response.models.messages.payment.init.ConfirmationPayment;
+import com.gospay.sdk.api.response.models.messages.payment.Payment;
+import com.gospay.sdk.exceptions.GosInvalidInputException;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.storage.GosStorage;
+import com.gospay.sdk.ui.dialog.card.add.AddCardDialog;
+import com.gospay.sdk.ui.dialog.card.select.SelectCardDialog;
+import com.gospay.sdk.ui.dialog.payment.PaymentDialog;
+import com.gospay.sdk.ui.dialog.payment.PaymentStep;
 import com.gospay.sdk.util.Logger;
 
 import java.util.ArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+import java.util.List;
 
 /**
  * Created by bertalt on 01.09.16.
@@ -37,58 +39,92 @@ import java.util.concurrent.Executors;
  */
 public final class GosSdkManager {
 
-    private Context context;
+    private FragmentActivity context;
     private GosStorage storage;
     private GosNetworkManager networkManager;
     private static GosSdkManager ourInstance;
-    private Handler mainHandler;
+    private List<CardView> cardList = new ArrayList<>();
 
 
-    private GosSdkManager(Context context) {
-        this.context = context;
+    public static GosSdkManager create(FragmentActivity context) {
 
-        storage = GosStorage.newInstance(context);
-        mainHandler = new Handler(context.getMainLooper());
-        networkManager = GosNetworkManager.getInstance(context);
-
+        ourInstance = new GosSdkManager(context);
+        Logger.DEBUG = true;
+        return ourInstance;
     }
 
-    public static GosSdkManager create(Context context) {
-        ourInstance = new GosSdkManager(context);
+    public static GosSdkManager create(FragmentActivity context, boolean cacheCards) {
+
+        if (ourInstance == null) {
+            ourInstance = new GosSdkManager(context);
+
+
+            Logger.DEBUG = true;
+            if (cacheCards)
+                ourInstance.getCardList(new GosGetCardListListener() {
+                    @Override
+                    public void onGetCardListSuccess(ArrayList<CardView> cardList) {
+                        ourInstance.cardList.addAll(cardList);
+                    }
+
+                    @Override
+                    public void onGetCardListFailure(String message) {
+                        Logger.LOGD(message);
+                    }
+                });
+        }
 
         return ourInstance;
     }
-    public static GosSdkManager create(Context context, boolean setupDebug ) {
-        ourInstance = new GosSdkManager(context);
-        Logger.DEBUG = setupDebug;
-        Logger.LOGD("Config from SDK "+BuildConfig.APPLICATION_ID);
-         return ourInstance;
-    }
+
 
     public static GosSdkManager getInstance() {
 
         if (ourInstance == null)
-            throw new GosSdkException("SDK has not been created yet.", null);
+            throw new GosSdkException("SDK has not been created yet.");
         else {
             return ourInstance;
         }
     }
 
-    public void destroy() {
-        context = null;
-        storage.clear();
-        storage.destroy();
-        networkManager = null;
+
+    private GosSdkManager(FragmentActivity context) {
+
+        this.context = context;
+        storage = GosStorage.newInstance(context);
+        networkManager = GosNetworkManager.newInstance(context);
     }
 
 
-    public void addCard(long cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName, final GosAddCardListener listener) {
+    public void addCard(String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName, final GosAddCardListener listener) throws GosInvalidInputException {
 
 
         final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expireYear, cvv, cardName);
 
-            networkManager.addCard(cardFields, listener);
+        networkManager.addCard(cardFields, listener, false);
 
+    }
+
+
+    public void addCardWithDialog(FragmentActivity context, final GosAddCardListener listener, boolean showProgress) {
+
+        DialogFragment fragment = AddCardDialog.newInstance(listener, showProgress);
+
+        fragment.setCancelable(false);
+
+        fragment.show(context.getSupportFragmentManager(), AddCardDialog.TAG);
+
+    }
+
+    public void selectCardWithDialog(FragmentActivity context, GosSelectCardListener listener) {
+
+        DialogFragment fragment;
+        if (cardList.size() == 0) {
+            fragment = SelectCardDialog.newInstance(listener);
+        } else {
+            fragment = SelectCardDialog.newInstance(listener, cardList);
+        }
+        fragment.show(context.getSupportFragmentManager(), SelectCardDialog.TAG);
     }
 
     public void getCardList(GosGetCardListListener listener) {
@@ -96,7 +132,13 @@ public final class GosSdkManager {
         networkManager.getCardList(listener);
     }
 
+    public List<CardView> getCachedCardList() {
 
+        if (cardList != null)
+            return cardList;
+        else
+            return new ArrayList<>();
+    }
 
 
     public void setDebug(boolean debug) {
@@ -104,29 +146,42 @@ public final class GosSdkManager {
     }
 
 
-    public void initPayment(CardReference cardReference, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
+    public void initPayment(CardView cardView, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
 
-        InitPaymentParameter parameter = new InitPaymentParameter(cardReference, paymentFields);
-
-        networkManager.initPayment(parameter, initPaymentListener);
-    }
-
-    public void initPaymentUiThread(CardReference cardReference, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
-
-        InitPaymentParameter parameter = new InitPaymentParameter(cardReference, paymentFields);
+        InitPaymentParameter parameter = new InitPaymentParameter(cardView.getCardId(), paymentFields);
 
         networkManager.initPayment(parameter, initPaymentListener);
     }
 
-    public void confirmPayment(ConfirmationPayment confirmationPayment, GosConfirmationPaymentListener listener) {
+    public void processPaymentWithDialog(FragmentActivity activity, PaymentFields paymentFields) {
 
+        DialogFragment fragment = PaymentDialog.newInstance();
 
+        Bundle args = new Bundle();
 
-        networkManager.confirmationPayment(confirmationPayment, listener);
+        args.putDouble(PaymentDialog.KEY_AMOUNT, paymentFields.getPrice());
+        args.putString(PaymentDialog.KEY_CURRENCY, paymentFields.getCurrency().getCurrencyCode());
+        args.putString(PaymentDialog.KEY_ORDER_ID, paymentFields.getOrder());
+        args.putString(PaymentDialog.KEY_DESCRIPTION, paymentFields.getDescription());
+
+        fragment.setArguments(args);
+
+        fragment.show(activity.getSupportFragmentManager(), PaymentDialog.TAG);
+
     }
 
-    public void getPaymentStatus(ConfirmedPayment confirmedPayment, GosGetPaymentStatusListener getPaymentStatusListener) {
+    public void confirmPayment(Payment confirmationPayment, String cvv, GosConfirmationPaymentListener listener) {
 
-        networkManager.getPaymentStatus(confirmedPayment, getPaymentStatusListener);
+        ConfirmationPaymentParameter param = new ConfirmationPaymentParameter(confirmationPayment.getId(), cvv);
+
+        networkManager.confirmationPayment(param, listener);
+
+    }
+
+    public void getPaymentStatus(Payment payment, GosGetPaymentStatusListener getPaymentStatusListener) {
+
+        GetPaymentStatusParameter parameter = new GetPaymentStatusParameter(payment.getId());
+
+        networkManager.getPaymentStatus(parameter, getPaymentStatusListener);
     }
 }

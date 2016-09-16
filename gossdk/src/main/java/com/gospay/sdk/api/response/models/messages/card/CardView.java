@@ -18,25 +18,14 @@ public class CardView {
         return cardId;
     }
 
-    public void setCardId(String cardId) {
-        this.cardId = cardId;
-    }
-
     public String getCardMask() {
         return cardMask;
     }
-
-    public void setCardMask(String cardMask) {
-        this.cardMask = cardMask;
-    }
-
+    
     public String getAlias() {
         return alias;
     }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
-    }
 
 
     @Override

@@ -6,14 +6,17 @@ import java.util.Currency;
  * Created by bertalt on 08.09.16.
  */
 public class PaymentFields {
+
     private double price;
     private Currency currency;
-    private String summary;
+    private String description;
+    private String order;
 
-    public PaymentFields(double price, Currency currency, String summary) {
-        this.price = price;
-        this.currency = currency;
-        this.summary = summary;
+    public PaymentFields(double amount, String currency, String description, String order) {
+        this.price = amount;
+        this.currency = Currency.getInstance(currency);
+        this.description = description;
+        this.order = order;
     }
 
     public double getPrice() {
@@ -24,7 +27,11 @@ public class PaymentFields {
         return currency;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getDescription() {
+        return description;
+    }
+
+    public String getOrder() {
+        return order;
     }
 }

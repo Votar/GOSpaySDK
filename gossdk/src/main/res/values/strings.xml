@@ -5,5 +5,20 @@
     <string name="text_expiry_date">Expiry date</string>
     <string name="CCV">CVV</string>
     <string name="error_network_connection">No connection with server</string>
+    <string name="text_cvv">CVV</string>
+    <string name="text_alias">Card alias:</string>
+    <string name="ui_btn_add">Submit</string>
+    <string name="ui_btn_cancel">Cancel</string>
+    <string name="error_invalid_card_number">Invalid card number</string>
+    <string name="error_invalid_cvv">Invalid cvv  [XXX]</string>
+    <string name="error_comon_validator_error">Check inputted data</string>
+    <string name="error_invalid_expire_month">Invalid month [1–12]</string>
+    <string name="error_invalid_expire_year">Invalid year</string>
+    <string name="text_progress_dialog">Loading...</string>
+    <string name="btn_select">select</string>
+    <string name="text_list_is_empty">List is empty</string>
+    <string name="label_order_id">Order:</string>
+    <string name="text_btn_pay">pay</string>
+    <string name="hint_select_card">You should select any card</string>
 
 </resources>
