@@ -1,11 +1,7 @@
 package com.gospay.sdk;
 
-import com.gospay.sdk.api.response.models.messages.card.CardView;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
 
 /**
  * Created by bertalt on 07.09.16.

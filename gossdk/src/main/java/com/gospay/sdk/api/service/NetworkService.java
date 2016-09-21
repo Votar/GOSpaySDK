@@ -1,11 +1,12 @@
-package com.gospay.sdk.api.client;
+package com.gospay.sdk.api.service;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
+import android.app.IntentService;
+import android.content.Intent;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
 import com.gospay.sdk.api.ServerApi;
-import com.gospay.sdk.api.listeners.GosResponseCallback;
+import com.gospay.sdk.api.client.GosRequest;
 import com.gospay.sdk.api.response.models.GosResponse;
 import com.gospay.sdk.util.Logger;
 
@@ -16,59 +17,98 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Created by bertalt on 11.09.16.
+ * Created by bertalt on 19.09.16.
  */
-public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
+public class NetworkService extends IntentService {
 
-    private GosResponseCallback listener;
-    private ProgressDialog progressDialog;
-
-    public AsyncHttpClient(GosResponseCallback listener) {
-        this.listener = listener;
-
+    public interface NetworkContract {
+        String KEY_REQUEST = "intent_key_request";
+        String KEY_RESPONSE = "intent_key_response";
+        String ACTION_GET_CARD_LIST = "com.gospay.sdk.service.GET_CARD_LIST";
+        String ACTION_ADD_CARD = "com.gospay.sdk.service.ADD_CARD";
+        String ACTION_INIT_PAYMENT = "com.gospay.sdk.service.INIT_PAYMENT";
+        String ACTION_CONFIRM_PAYMENT = "com.gospay.sdk.service.CONFIRM_PAYMENT";
+        String ACTION_GET_PAYMENT_STATUS = "com.gospay.sdk.service.GET_PAYMENT_STATUS";
     }
 
+    static final String DEFAULT_NAME = "com.gospay.sdk.service.NetworkService";
+
+    public NetworkService() {
+        super(DEFAULT_NAME);
+    }
+
+    private Gson gson = new Gson();
+
+    /**
+     * Creates an IntentService.  Invoked by your subclass's constructor.
+     *
+     * @param name Used to name the worker thread, important only for debugging.
+     */
+
+
+    public NetworkService(String name) {
+        super(name);
+    }
 
     @Override
-    protected GosResponse doInBackground(GosRequest... params) {
+    protected void onHandleIntent(Intent intent) {
 
-        for (GosRequest request : params) {
-            Logger.LOGNET("init request: " + request.toString());
-        }
+        GosRequest request = gson.fromJson(intent.getStringExtra(NetworkContract.KEY_REQUEST), GosRequest.class);
+
+        Logger.LOGD("Init request by service" + request.toString());
 
         GosResponse response = null;
 
-        if (params[0].getMethod().equalsIgnoreCase(ServerApi.GOS_METHODS.POST))
-            response = callPost(params[0]);
-        else if (params[0].getMethod().equalsIgnoreCase(ServerApi.GOS_METHODS.GET))
-            response = callGet(params[0]);
+        if (request.getMethod().equalsIgnoreCase(ServerApi.GOS_METHODS.POST))
+            response = callPost(request);
+        else if (request.getMethod().equalsIgnoreCase(ServerApi.GOS_METHODS.GET))
+            response = callGet(request);
 
-        return response;
+            sendBroadcastResult(request, response);
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
+    private void sendBroadcastResult(GosRequest request, GosResponse response) {
 
-        if(progressDialog !=null)
-            progressDialog.show();
+        Intent broadcastIntent = null;
+
+
+
+            Logger.LOGD("Prepare to send local broadcast with action: " + request.getRequestAction());
+            switch (request.getRequestAction()) {
+
+                case ServerApi.GOS_REQUESTS.GET_CARD_LIST:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_GET_CARD_LIST)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+                case ServerApi.GOS_REQUESTS.ADD_CARD:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_ADD_CARD)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+                case ServerApi.GOS_REQUESTS.INIT_PAYMENT:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_INIT_PAYMENT)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+                case ServerApi.GOS_REQUESTS.CONFIRM_PAYMENT:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_CONFIRM_PAYMENT)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+                case ServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_GET_PAYMENT_STATUS)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+            }
+            if (broadcastIntent != null)
+                LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(broadcastIntent);
+            else
+                Logger.LOGE("Unknown requestAction");
+
 
     }
 
-    @Override
-    protected void onPostExecute(GosResponse gosResponse) {
-        super.onPostExecute(gosResponse);
-
-        if(progressDialog !=null)
-            progressDialog.dismiss();
-
-        listener.onProcessFinished(gosResponse);
-    }
 
     private GosResponse callGet(GosRequest request) {
 
@@ -101,7 +141,6 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
 
         return response;
     }
-
 
 
     private GosResponse callPost(GosRequest request) {
@@ -170,8 +209,7 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
-        }
-        finally {
+        } finally {
             try {
                 if (reader != null) {
                     reader.close();
@@ -194,12 +232,5 @@ public class AsyncHttpClient extends AsyncTask<GosRequest, Void, GosResponse> {
 
 
         return response;
-    }
-
-    private static void logCookies(Map<String, List<String>> headerFields) {
-        Logger.LOGNET("Cookies:");
-        for (String tmpKey : headerFields.keySet())
-            Logger.LOGNET(tmpKey + " :" + Arrays.toString(headerFields.get(tmpKey).toArray()));
-
     }
 }

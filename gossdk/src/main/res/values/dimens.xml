@@ -13,4 +13,7 @@
     <dimen name="add_card_dialog_height">160dp</dimen>
     <dimen name="padding_content_card">16dp</dimen>
     <dimen name="dialog_payment_matging_currency">4dp</dimen>
+    <dimen name="content_padding">16dp</dimen>
+    <dimen name="text_size_card_normal">14sp</dimen>
+    <dimen name="text_size_card_big">20sp</dimen>
 </resources>

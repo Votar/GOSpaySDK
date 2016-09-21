@@ -18,7 +18,7 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosSelectCardListener;
-import com.gospay.sdk.api.response.models.messages.card.CardView;
+import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +36,7 @@ public class SelectCardDialog extends DialogFragment {
     private RecyclerView recyclerView;
     private CardListAdapter cardListAdapter;
     private TextView emptyView;
-    private List<CardView> cardList = new ArrayList<>();
+    private List<CardViewModel> cardList = new ArrayList<>();
 
 
     private ProgressDialog progressDialog;
@@ -52,7 +52,7 @@ public class SelectCardDialog extends DialogFragment {
     }
 
     @SuppressLint("ValidFragment")
-    private SelectCardDialog(GosSelectCardListener listener, List<CardView> cardList) {
+    private SelectCardDialog(GosSelectCardListener listener, List<CardViewModel> cardList) {
 
         this.selectCardListener = listener;
         this.cardList.addAll(cardList);
@@ -62,7 +62,7 @@ public class SelectCardDialog extends DialogFragment {
 
         return new SelectCardDialog(listener);
     }
-    public static SelectCardDialog newInstance(GosSelectCardListener listener, List<CardView> cardList) {
+    public static SelectCardDialog newInstance(GosSelectCardListener listener, List<CardViewModel> cardList) {
 
         return new SelectCardDialog(listener, cardList);
     }
@@ -141,7 +141,7 @@ public class SelectCardDialog extends DialogFragment {
         }
     }
 
-    private void setupRecycler(List<CardView> cardList){
+    private void setupRecycler(List<CardViewModel> cardList){
 
         cardListAdapter = new CardListAdapter(cardList, onCardClickListener);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, true);
@@ -152,21 +152,19 @@ public class SelectCardDialog extends DialogFragment {
 
     private void getDataSet() {
 
-        GosNetworkManager.getInstance().getCardList(new GosGetCardListListener() {
-            @Override
-            public void onGetCardListSuccess(ArrayList<CardView> cardList) {
+            GosNetworkManager.getInstance().getCardList(getActivity(), new GosGetCardListListener() {
+                @Override
+                public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
+                    setupRecycler(cardList);
+                }
+                @Override
+                public void onGetCardListFailure(String message) {
 
-                setupRecycler(cardList);
-            }
-
-            @Override
-            public void onGetCardListFailure(String message) {
-
-                cardListAdapter = new CardListAdapter(new ArrayList<CardView>(), onCardClickListener);
-                emptyView.setText(message);
-                setupView();
-            }
-        });
+                    cardListAdapter = new CardListAdapter(new ArrayList<CardViewModel>(), onCardClickListener);
+                    emptyView.setText(message);
+                    setupView();
+                }
+            });
 
     }
 
@@ -179,9 +177,9 @@ public class SelectCardDialog extends DialogFragment {
 
     OnCardClickListener onCardClickListener = new OnCardClickListener() {
         @Override
-        public void OnItemClicked(CardView cardView) {
+        public void OnItemClicked(CardViewModel cardViewModel) {
             dismiss();
-            selectCardListener.onSuccessSelectCard(cardView);
+            selectCardListener.onSuccessSelectCard(cardViewModel);
         }
     };
 }

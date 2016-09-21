@@ -20,9 +20,9 @@ import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
-import com.gospay.sdk.api.response.models.messages.card.CardView;
+import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
-import com.gospay.sdk.ui.UiUtil;
+import com.gospay.sdk.util.UiUtil;
 import com.gospay.sdk.ui.dialog.card.select.CardListAdapter;
 import com.gospay.sdk.ui.dialog.card.select.OnCardClickListener;
 import com.gospay.sdk.util.Logger;
@@ -39,14 +39,12 @@ public final class PaymentDialog extends DialogFragment {
 
     private RecyclerView recyclerView;
     private CardListAdapter cardListAdapter;
-    private CardView selectedCard;
+    private CardViewModel selectedCard;
     private Button btnPay;
     private PaymentFields paymentFields;
 
 
-    private PaymentDialog(){
 
-    }
 
     public static final String KEY_CURRENCY="bundle_currency";
     public static final String KEY_DESCRIPTION="bundle_descr";
@@ -81,7 +79,7 @@ public final class PaymentDialog extends DialogFragment {
 
         View view = inflater.inflate(R.layout.dialog_payment, null);
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.dialog_payment_recycler);
+        recyclerView = (RecyclerView) view.findViewById(R.id.payment_card_recycler);
 
         btnPay = (Button)view.findViewById(R.id.dialog_payment_btn_pay);
         btnPay.setOnClickListener(onClickPay);
@@ -106,7 +104,7 @@ public final class PaymentDialog extends DialogFragment {
             {
                 InitPaymentParameter parameter = new InitPaymentParameter(selectedCard.getCardId(), paymentFields);
                 GosNetworkManager.getInstance().initPayment(parameter, gosInitPaymentListener);
-                UiUtil.getDefaultProgressDialog(getActivity()).show();
+                UiUtil.showDefaultProgressDialog(getActivity());
                 dismiss();
             }else
                 Toast.makeText(getContext(), getString(R.string.hint_select_card), Toast.LENGTH_SHORT).show();
@@ -137,7 +135,7 @@ public final class PaymentDialog extends DialogFragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
-        List<CardView> list = GosSdkManager.getInstance().getCachedCardList();
+        List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
         if(list.size() != 0) {
             cardListAdapter = new CardListAdapter(list, onCardClickListener);
             recyclerView.setAdapter(cardListAdapter);
@@ -149,15 +147,15 @@ public final class PaymentDialog extends DialogFragment {
 
     OnCardClickListener onCardClickListener = new OnCardClickListener() {
         @Override
-        public void OnItemClicked(CardView cardView) {
-            selectedCard = cardView;
+        public void OnItemClicked(CardViewModel cardViewModel) {
+            selectedCard = cardViewModel;
         }
     };
 
     GosInitPaymentListener gosInitPaymentListener = new GosInitPaymentListener() {
         @Override
         public void onSuccessInitPayment(Payment paymentInProgress) {
-            Logger.LOGD("Success ##############");
+
 
         }
 

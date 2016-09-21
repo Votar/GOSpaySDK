@@ -16,10 +16,21 @@ public class Logger {
         if(DEBUG)
             Log.d("DEBUG", message);
     }
+    public static void LOGD(String TAG, String message){
+
+        if(DEBUG)
+            Log.d(TAG, message);
+    }
 
     public static void LOGNET(String message){
 
         if(DEBUG)
             Log.d("NETWORK", message);
+    }
+
+    public static void LOGE(String s) {
+
+        if(DEBUG)
+            Log.e("DEBUG",s);
     }
 }

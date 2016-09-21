@@ -20,6 +20,8 @@ public class GosResponse {
     private JsonElement payload;
     private Map<String, List<String>> headerFields;
 
+
+
     public GosResponse(ResultModel result, JsonElement payload) {
         this.result = result;
         this.payload = payload;

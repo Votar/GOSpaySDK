@@ -1,15 +1,20 @@
 package com.gospay.sdk.api;
 
 
+import android.app.Activity;
 import android.app.Application;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.support.v4.content.LocalBroadcastManager;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.gospay.sdk.R;
-import com.gospay.sdk.api.client.AsyncHttpClient;
+import com.gospay.sdk.api.broadcast.AddCardReceiver;
+import com.gospay.sdk.api.broadcast.ConfirmPaymentReceiver;
+import com.gospay.sdk.api.broadcast.GetCardListReceiver;
+import com.gospay.sdk.api.broadcast.GetStatusPaymentReceiver;
+import com.gospay.sdk.api.broadcast.InitPaymentReceiver;
 import com.gospay.sdk.api.client.GosRequest;
 import com.gospay.sdk.api.client.cookie.MyCookieStore;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
@@ -20,13 +25,10 @@ import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
-import com.gospay.sdk.api.listeners.GosResponseCallback;
 import com.gospay.sdk.api.request.models.card.CardFields;
-import com.gospay.sdk.api.response.models.GosResponse;
-import com.gospay.sdk.api.response.models.messages.card.CardView;
-import com.gospay.sdk.api.response.models.messages.payment.Payment;
 import com.gospay.sdk.api.util.NetworkUtils;
 import com.gospay.sdk.exceptions.GosSdkException;
+import com.gospay.sdk.api.service.NetworkService;
 import com.gospay.sdk.storage.GosStorage;
 import com.gospay.sdk.util.Logger;
 
@@ -34,7 +36,6 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.net.HttpCookie;
-import java.util.ArrayList;
 
 
 /**
@@ -48,7 +49,7 @@ public final class GosNetworkManager {
     //    private static ServerApi serverApi;
     private Context context;
     private GosStorage storage;
-    private static String API_KEY;
+    //    private static String API_KEY;
     //    private final String DEBUG_TOKEN = "GOS.TRACK=YXAVPMYXS5PMHDT65442VHQHYI7JUYFBHA5AMBC66RD2NUAWJVDCBR2RY4Z4PC7HDNDA6RWPW6GWOUP6CKDK2GG6OMDPDS4P7BPVMY7CYM4QRJWSZV4FNHFDCOR2ZKA4OXPS7KG7A3GJUV4UIZ3EJK4";
     private final String JSON_TYPE = "application/json";
     private CookieManager cookieManager;
@@ -108,48 +109,45 @@ public final class GosNetworkManager {
         return Logger.DEBUG;
     }
 
+    public void getCardList(Activity context, GosGetCardListListener listListener) {
 
-    public void getCardList(final GosGetCardListListener listener) {
-
-        final GosRequest request = new GosRequest(ServerApi.BACKEND_URL + ServerApi.GOS_REQUESTS.GET_CARD_LIST,
+        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.GET_CARD_LIST,
                 null,
                 ServerApi.GOS_METHODS.GET);
 
         setupDefaultHeaders(request);
 
-        new AsyncHttpClient(new GosResponseCallback() {
-            @Override
-            public void onProcessFinished(GosResponse response) {
+        Intent intent = new Intent(context, NetworkService.class);
+        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
-                if (response == null) {
-                    listener.onGetCardListFailure(context.getString(R.string.error_network_connection));
-                } else {
-                    Gson gson = new Gson();
-                    int resultCode = response.getResult().getCode();
+        GetCardListReceiver receiver = new GetCardListReceiver(listListener);
+        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_GET_CARD_LIST);
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
-                    switch (resultCode) {
-                        case 0:
-                            Logger.LOGNET(response.getPayload().toString());
-                            ArrayList<CardView> resultArray = new ArrayList<CardView>();
+        context.startService(intent);
+    }
 
-                            JsonArray array = response.getPayload().getAsJsonArray();
+    public void addCard(CardFields fields, final GosAddCardListener listener, boolean showProgress) {
 
-                            if (array.size() == 0)
-                                listener.onGetCardListSuccess(resultArray);
-                            else {
-                                for (JsonElement nextValue : array)
-                                    resultArray.add(gson.fromJson(nextValue, CardView.class));
+        String json = gson.toJson(fields, CardFields.class);
 
-                                listener.onGetCardListSuccess(resultArray);
-                            }
-                            break;
-                        default:
-                            listener.onGetCardListFailure(response.getResult().getMessage());
-                    }
-                }
-            }
-        })
-                .execute(request);
+        Logger.LOGNET("toJson = \n" + json);
+
+        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.ADD_CARD,
+                json,
+                ServerApi.GOS_METHODS.POST);
+
+        setupDefaultHeaders(request);
+
+        Intent intent = new Intent(context, NetworkService.class);
+        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+
+        AddCardReceiver receiver = new AddCardReceiver(listener);
+        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_ADD_CARD);
+
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
+
+        context.startService(intent);
 
     }
 
@@ -157,35 +155,21 @@ public final class GosNetworkManager {
 
         String json = gson.toJson(parameter, InitPaymentParameter.class);
 
-        final GosRequest request = new GosRequest(ServerApi.BACKEND_URL + ServerApi.GOS_REQUESTS.INIT_PAYMENT,
+        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.INIT_PAYMENT,
                 json,
                 ServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        new AsyncHttpClient(new GosResponseCallback() {
-            @Override
-            public void onProcessFinished(GosResponse response) {
+        Intent intent = new Intent(context, NetworkService.class);
+        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
-                if (response == null) {
-                    initPaymentListener.onFailureInitPayment(context.getString(R.string.error_network_connection));
-                } else {
+        InitPaymentReceiver receiver = new InitPaymentReceiver(initPaymentListener);
+        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_INIT_PAYMENT);
 
-                    int resultCode = response.getResult().getCode();
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
-                    switch (resultCode) {
-                        case 0:
-                            Logger.LOGNET(response.getPayload().toString());
-                            initPaymentListener.onSuccessInitPayment(gson.fromJson(response.getPayload(), Payment.class));
-                            break;
-                        default:
-                            initPaymentListener.onFailureInitPayment(response.getResult().getMessage());
-                    }
-                }
-            }
-        })
-                .execute(request);
-
+        context.startService(intent);
 
     }
 
@@ -195,116 +179,50 @@ public final class GosNetworkManager {
 
         Logger.LOGNET("toJson = \n" + parameter.toString());
 
-        final GosRequest request = new GosRequest(ServerApi.BACKEND_URL + ServerApi.GOS_REQUESTS.CONFIRM_PAYMENT,
+        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.CONFIRM_PAYMENT,
                 json,
                 ServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        new AsyncHttpClient(new GosResponseCallback() {
-            @Override
-            public void onProcessFinished(GosResponse response) {
+        Intent intent = new Intent(context, NetworkService.class);
+        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
-                if (response == null) {
-                    listener.onFailureConfirmationPayment(context.getString(R.string.error_network_connection));
-                } else {
+        ConfirmPaymentReceiver receiver = new ConfirmPaymentReceiver(listener);
+        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_CONFIRM_PAYMENT);
 
-                    int resultCode = response.getResult().getCode();
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
-                    switch (resultCode) {
-                        case 0:
-                            listener.onSuccessConfirmationPayment(response.getResult().getMessage());
-                            break;
-                        default:
-                            listener.onFailureConfirmationPayment(response.getResult().getMessage());
-                    }
-                }
-            }
-        })
-                .execute(request);
+        context.startService(intent);
+
 
 
     }
 
-    public void getPaymentStatus(GetPaymentStatusParameter parameter, final GosGetPaymentStatusListener getPaymentStatusListener) {
+    public void getPaymentStatus(GetPaymentStatusParameter parameter, final GosGetPaymentStatusListener listener) {
 
         String json = gson.toJson(parameter, GetPaymentStatusParameter.class);
 
-        final GosRequest request = new GosRequest(ServerApi.BACKEND_URL + ServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS,
+        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS,
                 json,
                 ServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        new AsyncHttpClient(new GosResponseCallback() {
-            @Override
-            public void onProcessFinished(GosResponse response) {
+        Intent intent = new Intent(context, NetworkService.class);
+        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
-                if (response == null) {
-                    getPaymentStatusListener.onFailureGetPaymentStatus(context.getString(R.string.error_network_connection));
-                } else {
+        GetStatusPaymentReceiver receiver = new GetStatusPaymentReceiver(listener);
+        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_GET_PAYMENT_STATUS);
 
-                    int resultCode = response.getResult().getCode();
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
-                    switch (resultCode) {
-                        case 0:
-                            Logger.LOGNET(response.getPayload().toString());
-                            getPaymentStatusListener.onSuccessGetPaymentStatus(gson.fromJson(response.getPayload(), Payment.class));
-                            break;
-                        default:
-                            getPaymentStatusListener.onFailureGetPaymentStatus(response.getResult().getMessage());
-                    }
-                }
-            }
-        })
-                .execute(request);
+        context.startService(intent);
 
     }
 
 
-    public void addCard(CardFields fields, final GosAddCardListener listener, boolean showProgress) {
 
-        String json = gson.toJson(fields, CardFields.class);
-
-        Logger.LOGNET("toJson = \n" + json);
-
-        final GosRequest request = new GosRequest(ServerApi.BACKEND_URL + ServerApi.GOS_REQUESTS.ADD_CARD,
-                json,
-                ServerApi.GOS_METHODS.POST);
-
-        setupDefaultHeaders(request);
-
-        GosResponseCallback gosCallback = new GosResponseCallback() {
-            @Override
-            public void onProcessFinished(GosResponse response) {
-
-                if (response == null) {
-                    listener.onFailureAddCard(context.getString(R.string.error_network_connection));
-                } else {
-
-                    int resultCode = response.getResult().getCode();
-
-                    switch (resultCode) {
-                        case 0:
-                            listener.onSuccessAddCard(gson.fromJson(response.getPayload(), CardView.class));
-                            break;
-                        default:
-                            listener.onFailureAddCard(response.getResult().getMessage());
-                    }
-                }
-            }
-        };
-
-        AsyncHttpClient client;
-
-        if (showProgress)
-            client = new AsyncHttpClient(context, gosCallback);
-        else
-            client = new AsyncHttpClient(gosCallback);
-
-        client.execute(request);
-
-    }
 
 
     private void setupDefaultHeaders(GosRequest request) {

@@ -11,12 +11,10 @@ public class Payment {
     private String id;
     private Summary amount;
     private Summary total;
+    private String status;
+    private String url ="http:\\www.google.com";
 
-    public Payment(String id, Summary amount, Summary total) {
-        this.id = id;
-        this.amount = amount;
-        this.total = total;
-    }
+
 
     public String getId() {
         return id;
@@ -30,12 +28,21 @@ public class Payment {
         return total;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
     @Override
     public String toString() {
         return "Payment{" +
                 "id='" + id + '\'' +
                 ", amount=" + amount +
                 ", total=" + total +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

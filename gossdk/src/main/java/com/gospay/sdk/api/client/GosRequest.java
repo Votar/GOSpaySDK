@@ -6,6 +6,8 @@ package com.gospay.sdk.api.client;
 
 import android.support.annotation.Nullable;
 
+import com.gospay.sdk.api.ServerApi;
+
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -14,7 +16,8 @@ import java.util.Map;
 
 public class GosRequest {
 
-    private String url;
+    private StringBuilder url = new StringBuilder().append(ServerApi.BACKEND_URL);
+    private String requestAction;
     private String body;
     private String method;
     private Map<String, String> headers;
@@ -32,12 +35,13 @@ public class GosRequest {
 
     public GosRequest(String url) {
         headers = new HashMap<>();
-        this.url = url;
+        requestAction = url;
+        this.url.append(requestAction);
 
     }
 
     public String getUrl() {
-        return url;
+        return url.toString();
     }
 
     public String getBody() {
@@ -46,6 +50,10 @@ public class GosRequest {
 
     public String getMethod() {
         return method;
+    }
+
+    public String getRequestAction() {
+        return requestAction;
     }
 
     public void addHeader(String key, String value){

@@ -1,8 +1,6 @@
 package com.gospay.sdk;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -19,16 +17,16 @@ import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
-import com.gospay.sdk.api.response.models.messages.card.CardView;
+import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
 import com.gospay.sdk.exceptions.GosInvalidInputException;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.storage.GosStorage;
+import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.ui.dialog.card.add.AddCardDialog;
 import com.gospay.sdk.ui.dialog.card.select.SelectCardDialog;
-import com.gospay.sdk.ui.dialog.payment.PaymentDialog;
-import com.gospay.sdk.ui.dialog.payment.PaymentStep;
 import com.gospay.sdk.util.Logger;
+import com.gospay.sdk.util.Parser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +41,8 @@ public final class GosSdkManager {
     private GosStorage storage;
     private GosNetworkManager networkManager;
     private static GosSdkManager ourInstance;
-    private List<CardView> cardList = new ArrayList<>();
+    private List<CardViewModel> cardList = new ArrayList<>();
+    private boolean cacheCards;
 
 
     public static GosSdkManager create(FragmentActivity context) {
@@ -55,23 +54,10 @@ public final class GosSdkManager {
 
     public static GosSdkManager create(FragmentActivity context, boolean cacheCards) {
 
+
         if (ourInstance == null) {
-            ourInstance = new GosSdkManager(context);
-
-
+            ourInstance = new GosSdkManager(context, cacheCards);
             Logger.DEBUG = true;
-            if (cacheCards)
-                ourInstance.getCardList(new GosGetCardListListener() {
-                    @Override
-                    public void onGetCardListSuccess(ArrayList<CardView> cardList) {
-                        ourInstance.cardList.addAll(cardList);
-                    }
-
-                    @Override
-                    public void onGetCardListFailure(String message) {
-                        Logger.LOGD(message);
-                    }
-                });
         }
 
         return ourInstance;
@@ -93,6 +79,26 @@ public final class GosSdkManager {
         this.context = context;
         storage = GosStorage.newInstance(context);
         networkManager = GosNetworkManager.newInstance(context);
+
+    }
+
+    private GosSdkManager(FragmentActivity context, boolean cacheCards) {
+        this(context);
+        this.cacheCards = cacheCards;
+
+        if (cacheCards)
+            getCardList(context, new GosGetCardListListener() {
+                @Override
+                public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
+                    ourInstance.cardList.addAll(cardList);
+                }
+
+                @Override
+                public void onGetCardListFailure(String message) {
+                    Logger.LOGD(message);
+                }
+            });
+
     }
 
 
@@ -127,12 +133,13 @@ public final class GosSdkManager {
         fragment.show(context.getSupportFragmentManager(), SelectCardDialog.TAG);
     }
 
-    public void getCardList(GosGetCardListListener listener) {
+    public void getCardList(FragmentActivity activity, GosGetCardListListener listener) {
 
-        networkManager.getCardList(listener);
+        networkManager.getCardList(activity, listener);
+
     }
 
-    public List<CardView> getCachedCardList() {
+    public List<CardViewModel> getCachedCardList() {
 
         if (cardList != null)
             return cardList;
@@ -146,27 +153,20 @@ public final class GosSdkManager {
     }
 
 
-    public void initPayment(CardView cardView, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
+    public void initPayment(CardViewModel cardViewModel, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
 
-        InitPaymentParameter parameter = new InitPaymentParameter(cardView.getCardId(), paymentFields);
+        InitPaymentParameter parameter = new InitPaymentParameter(cardViewModel.getCardId(), paymentFields);
 
         networkManager.initPayment(parameter, initPaymentListener);
     }
 
-    public void processPaymentWithDialog(FragmentActivity activity, PaymentFields paymentFields) {
+    public void processPaymentOneClick(FragmentActivity activity, PaymentFields paymentFields) {
 
-        DialogFragment fragment = PaymentDialog.newInstance();
+        Intent in = new Intent(activity, PaymentProcessingActivity.class);
 
-        Bundle args = new Bundle();
-
-        args.putDouble(PaymentDialog.KEY_AMOUNT, paymentFields.getPrice());
-        args.putString(PaymentDialog.KEY_CURRENCY, paymentFields.getCurrency().getCurrencyCode());
-        args.putString(PaymentDialog.KEY_ORDER_ID, paymentFields.getOrder());
-        args.putString(PaymentDialog.KEY_DESCRIPTION, paymentFields.getDescription());
-
-        fragment.setArguments(args);
-
-        fragment.show(activity.getSupportFragmentManager(), PaymentDialog.TAG);
+        in.putExtra(PaymentProcessingActivity.PaymentContract.KEY_PAYMENT_FIELDS,
+                Parser.getsInstance().toJson(paymentFields, PaymentFields.class));
+        activity.startActivity(in);
 
     }
 
@@ -184,4 +184,5 @@ public final class GosSdkManager {
 
         networkManager.getPaymentStatus(parameter, getPaymentStatusListener);
     }
+
 }
