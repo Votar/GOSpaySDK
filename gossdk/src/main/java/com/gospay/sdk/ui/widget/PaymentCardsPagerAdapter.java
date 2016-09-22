@@ -20,8 +20,9 @@ public class PaymentCardsPagerAdapter extends PagerAdapter {
         super();
         this.mDataset.clear();
         mDataset.addAll(dataset);
-
     }
+
+
 
 
     @Override

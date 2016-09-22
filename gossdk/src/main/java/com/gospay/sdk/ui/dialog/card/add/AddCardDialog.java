@@ -20,7 +20,7 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
-import com.gospay.sdk.exceptions.GosInvalidInputException;
+import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.ui.view.GosEditNumber;
 import com.gospay.sdk.util.Logger;
 
@@ -56,21 +56,9 @@ public class AddCardDialog extends DialogFragment {
         this.gosAddCardListener = listener;
     }
 
-    @SuppressLint("ValidFragment")
-    private AddCardDialog(GosAddCardListener listener, boolean showProgress) {
-        this(listener);
-        this.showProgress = showProgress;
-    }
-
     public static AddCardDialog newInstance(GosAddCardListener listener) {
 
         return new AddCardDialog(listener);
-    }
-
-    public static AddCardDialog newInstance(GosAddCardListener listener, boolean showProgress) {
-
-        return new AddCardDialog(listener, showProgress);
-
     }
 
 
@@ -128,10 +116,10 @@ public class AddCardDialog extends DialogFragment {
                         etCvv.getText().toString(),
                         etAlias.getText().toString());
 
-                    GosNetworkManager.getInstance().addCard(cardFields, gosAddCardListener, showProgress);
+                    GosNetworkManager.getInstance().addCard(getContext(),cardFields, gosAddCardListener, showProgress);
                 dismiss();
 
-            } catch (GosInvalidInputException ex) {
+            } catch (GosInvalidCardFieldsException ex) {
 
                 switch (ex.getInvalidField()) {
                     case CARD_NUMBER:

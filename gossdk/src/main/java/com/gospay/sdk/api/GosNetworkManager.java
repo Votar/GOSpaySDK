@@ -46,17 +46,11 @@ public final class GosNetworkManager {
     private static GosNetworkManager sInstance;
     private boolean isDebug = false;
     private String TAG = "GosNetworkManager";
-    //    private static ServerApi serverApi;
-    private Context context;
     private GosStorage storage;
-    //    private static String API_KEY;
-    //    private final String DEBUG_TOKEN = "GOS.TRACK=YXAVPMYXS5PMHDT65442VHQHYI7JUYFBHA5AMBC66RD2NUAWJVDCBR2RY4Z4PC7HDNDA6RWPW6GWOUP6CKDK2GG6OMDPDS4P7BPVMY7CYM4QRJWSZV4FNHFDCOR2ZKA4OXPS7KG7A3GJUV4UIZ3EJK4";
-    private final String JSON_TYPE = "application/json";
     private CookieManager cookieManager;
     private Gson gson;
+
     //Test
-
-
     //Production
     //public static final String BACKEND_URL = "http://gateway.gospay.net:80/ws/";
 
@@ -76,19 +70,7 @@ public final class GosNetworkManager {
     }
 
 
-    public static GosNetworkManager getInstance(Application context, boolean isDebug) {
-
-        if (sInstance == null)
-            sInstance = new GosNetworkManager(context, isDebug);
-
-
-        return sInstance;
-    }
-
     private GosNetworkManager(Context context) {
-
-
-        this.context = context;
         this.storage = GosStorage.getInstance();
         this.gson = new Gson();
         NetworkUtils.disableSSLCertificateChecking();
@@ -98,16 +80,6 @@ public final class GosNetworkManager {
 //        cookieManager.getCookieStore().removeAll();
     }
 
-    private GosNetworkManager(Context context, boolean isDebug) {
-
-        this(context);
-        this.isDebug = isDebug;
-
-    }
-
-    public boolean isDebug() {
-        return Logger.DEBUG;
-    }
 
     public void getCardList(Activity context, GosGetCardListListener listListener) {
 
@@ -127,7 +99,7 @@ public final class GosNetworkManager {
         context.startService(intent);
     }
 
-    public void addCard(CardFields fields, final GosAddCardListener listener, boolean showProgress) {
+    public void addCard(Context context, CardFields fields, final GosAddCardListener listener, boolean showProgress) {
 
         String json = gson.toJson(fields, CardFields.class);
 
@@ -151,7 +123,7 @@ public final class GosNetworkManager {
 
     }
 
-    public void initPayment(InitPaymentParameter parameter, final GosInitPaymentListener initPaymentListener) {
+    public void initPayment(Context context,InitPaymentParameter parameter, final GosInitPaymentListener initPaymentListener) {
 
         String json = gson.toJson(parameter, InitPaymentParameter.class);
 
@@ -173,7 +145,7 @@ public final class GosNetworkManager {
 
     }
 
-    public void confirmationPayment(ConfirmationPaymentParameter parameter, final GosConfirmationPaymentListener listener) {
+    public void confirmationPayment(Context context, ConfirmationPaymentParameter parameter, final GosConfirmationPaymentListener listener) {
 
         String json = gson.toJson(parameter, ConfirmationPaymentParameter.class);
 
@@ -196,10 +168,9 @@ public final class GosNetworkManager {
         context.startService(intent);
 
 
-
     }
 
-    public void getPaymentStatus(GetPaymentStatusParameter parameter, final GosGetPaymentStatusListener listener) {
+    public void getPaymentStatus(Context context, GetPaymentStatusParameter parameter, final GosGetPaymentStatusListener listener) {
 
         String json = gson.toJson(parameter, GetPaymentStatusParameter.class);
 
@@ -222,13 +193,11 @@ public final class GosNetworkManager {
     }
 
 
-
-
-
     private void setupDefaultHeaders(GosRequest request) {
 
         request.addHeader(ServerApi.GOS_HEADERS.API_KEY, storage.getApiKey());
         request.addHeader(ServerApi.GOS_HEADERS.LOCALE, storage.getLanguage());
+        String JSON_TYPE = "application/json";
         request.addHeader(ServerApi.GOS_HEADERS.CONTENT_TYPE, JSON_TYPE);
         //TMP
         request.addHeader(ServerApi.GOS_HEADERS.ORIGIN, "http://www.x-obmen.com/");

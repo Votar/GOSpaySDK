@@ -32,7 +32,6 @@ public class CreditCardValidatorUnitTest {
     @Test
     public void testExpireDateValidator() throws Exception {
 
-
         assertTrue("Expire date should be valid", CreditCardValidator.isExpireDateValid("01","19"));
         assertFalse("Expire date should be invalid", CreditCardValidator.isExpireDateValid("02","14"));
         assertFalse("Expire date should be invalid", CreditCardValidator.isExpireDateValid(null,"14"));
@@ -71,7 +70,6 @@ public class CreditCardValidatorUnitTest {
         assertNull(ExpireDateModel.create("1319"));
         thrown.expect(GosSdkException.class);
         assertNull(ExpireDateModel.create("fdst"));
-
     }
 
 }

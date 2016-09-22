@@ -189,7 +189,7 @@ public class TrackPaymentFragment extends Fragment {
         checkingStatusTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                GosSdkManager.getInstance().getPaymentStatus(currentPayment, gosGetPaymentStatusListener);
+                GosSdkManager.getInstance().getPaymentStatus(getContext(), currentPayment, gosGetPaymentStatusListener);
             }
         }, 0, UPDATE_TIME);
     }

@@ -9,10 +9,11 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         AddCardParameterUnitTest.class,
-        CreditCardValidatorUnitTest.class
+        CreditCardValidatorUnitTest.class,
+        PaymentFieldsValidatorUnitTest.class
 })
 
-public class FirstSuite {
+public class MainSuite {
 
 
 }

@@ -1,5 +1,6 @@
 package com.gospay.sdk;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -19,12 +20,13 @@ import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
-import com.gospay.sdk.exceptions.GosInvalidInputException;
+import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.storage.GosStorage;
 import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.ui.dialog.card.add.AddCardDialog;
 import com.gospay.sdk.ui.dialog.card.select.SelectCardDialog;
+import com.gospay.sdk.util.CreditCardValidator;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
 
@@ -37,14 +39,16 @@ import java.util.List;
  */
 public final class GosSdkManager {
 
-    private FragmentActivity context;
-    private GosStorage storage;
     private GosNetworkManager networkManager;
     private static GosSdkManager ourInstance;
     private List<CardViewModel> cardList = new ArrayList<>();
-    private boolean cacheCards;
 
-
+    /**
+     * Static creator for SDK manager
+     *
+     * @param context
+     * @return {@link GosSdkManager}
+     */
     public static GosSdkManager create(FragmentActivity context) {
 
         ourInstance = new GosSdkManager(context);
@@ -52,18 +56,11 @@ public final class GosSdkManager {
         return ourInstance;
     }
 
-    public static GosSdkManager create(FragmentActivity context, boolean cacheCards) {
-
-
-        if (ourInstance == null) {
-            ourInstance = new GosSdkManager(context, cacheCards);
-            Logger.DEBUG = true;
-        }
-
-        return ourInstance;
-    }
-
-
+    /**
+     * Static getter for SDK manager. Attention! You should always call create() method before this.
+     *
+     * @return {@link GosSdkManager}
+     */
     public static GosSdkManager getInstance() {
 
         if (ourInstance == null)
@@ -73,18 +70,18 @@ public final class GosSdkManager {
         }
     }
 
-
+    /**
+     * The {@link GosSdkManager} is used to add, list cards and execute payments
+     */
     private GosSdkManager(FragmentActivity context) {
 
-        this.context = context;
-        storage = GosStorage.newInstance(context);
+        GosStorage storage = GosStorage.newInstance(context);
         networkManager = GosNetworkManager.newInstance(context);
 
     }
 
     private GosSdkManager(FragmentActivity context, boolean cacheCards) {
         this(context);
-        this.cacheCards = cacheCards;
 
         if (cacheCards)
             getCardList(context, new GosGetCardListListener() {
@@ -101,27 +98,47 @@ public final class GosSdkManager {
 
     }
 
+    /**
+     * Execute request to add card. Result of operation will return in {@link GosAddCardListener} callback
+     *
+     * @param cardNumber
+     * @param expireMonth
+     * @param expireYear
+     * @param cvv
+     * @param cardAlias
+     * @param listener
+     * @throws GosInvalidCardFieldsException
+     */
+    public void addCard(Context context, String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
 
-    public void addCard(String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName, final GosAddCardListener listener) throws GosInvalidInputException {
+        final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expireYear, cvv, cardAlias);
 
-
-        final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expireYear, cvv, cardName);
-
-        networkManager.addCard(cardFields, listener, false);
+        networkManager.addCard(context, cardFields, listener, false);
 
     }
 
+    /**
+     * Shows dialog fragment with input fields to add card
+     *
+     * @param activity
+     * @param listener
+     */
+    public void addCardWithDialog(FragmentActivity activity, final GosAddCardListener listener) {
 
-    public void addCardWithDialog(FragmentActivity context, final GosAddCardListener listener, boolean showProgress) {
-
-        DialogFragment fragment = AddCardDialog.newInstance(listener, showProgress);
+        DialogFragment fragment = AddCardDialog.newInstance(listener);
 
         fragment.setCancelable(false);
 
-        fragment.show(context.getSupportFragmentManager(), AddCardDialog.TAG);
+        fragment.show(activity.getSupportFragmentManager(), AddCardDialog.TAG);
 
     }
 
+    /**
+     * Deprecated
+     *
+     * @param context
+     * @param listener
+     */
     public void selectCardWithDialog(FragmentActivity context, GosSelectCardListener listener) {
 
         DialogFragment fragment;
@@ -139,6 +156,11 @@ public final class GosSdkManager {
 
     }
 
+    /**
+     * Return a  {@link List}  of GOSPAY {@link CardViewModel} objects.
+     *
+     * @return
+     */
     public List<CardViewModel> getCachedCardList() {
 
         if (cardList != null)
@@ -147,19 +169,45 @@ public final class GosSdkManager {
             return new ArrayList<>();
     }
 
+    /**
+     * Executes initialization of payment. This action used to begin of payment processing.
+     *
+     * @param card                {@link CardViewModel} with UID of card
+     * @param paymentFields       {@link PaymentFields} with payment details
+     * @param initPaymentListener {@link GosInitPaymentListener} listener to return result by callback
+     */
+    public void initPayment(Context context, CardViewModel card, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
 
-    public void setDebug(boolean debug) {
-        Logger.DEBUG = debug;
+        InitPaymentParameter parameter = new InitPaymentParameter(card.getCardId(), paymentFields);
+
+        networkManager.initPayment(context, parameter, initPaymentListener);
     }
 
+    /**
+     * Executes confirmation of payment. This method usually call after {@link #initPayment(Context, CardViewModel, PaymentFields, GosInitPaymentListener) initPayment}
+     * to continue of payment processing
+     *
+     * @param confirmationPayment with Id of GOSPAY {@link Payment}
+     * @param cvv                 CVV security code of card
+     * @param listener            {@link GosConfirmationPaymentListener} listener to return result by callback
+     */
+    public void confirmPayment(Context context, Payment confirmationPayment, String cvv, GosConfirmationPaymentListener listener) throws GosInvalidCardFieldsException {
 
-    public void initPayment(CardViewModel cardViewModel, PaymentFields paymentFields, GosInitPaymentListener initPaymentListener) {
+        if (!CreditCardValidator.isCvvValid(cvv))
+            throw new GosInvalidCardFieldsException(String.format("Cvv is not valid: %1s", cvv), GosInvalidCardFieldsException.GosInputField.CVV);
 
-        InitPaymentParameter parameter = new InitPaymentParameter(cardViewModel.getCardId(), paymentFields);
+        ConfirmationPaymentParameter param = new ConfirmationPaymentParameter(confirmationPayment.getId(), cvv);
 
-        networkManager.initPayment(parameter, initPaymentListener);
+        networkManager.confirmationPayment(context, param, listener);
+
     }
 
+    /**
+     * Executes payment processing in GOSPAY  activity
+     *
+     * @param activity
+     * @param paymentFields {@link PaymentFields} with payment details
+     */
     public void processPaymentOneClick(FragmentActivity activity, PaymentFields paymentFields) {
 
         Intent in = new Intent(activity, PaymentProcessingActivity.class);
@@ -170,19 +218,17 @@ public final class GosSdkManager {
 
     }
 
-    public void confirmPayment(Payment confirmationPayment, String cvv, GosConfirmationPaymentListener listener) {
-
-        ConfirmationPaymentParameter param = new ConfirmationPaymentParameter(confirmationPayment.getId(), cvv);
-
-        networkManager.confirmationPayment(param, listener);
-
-    }
-
-    public void getPaymentStatus(Payment payment, GosGetPaymentStatusListener getPaymentStatusListener) {
+    /**
+     * Used to track payment status by GOSPAY {@link Payment} object with payment description
+     *
+     * @param payment
+     * @param getPaymentStatusListener {@link GosGetPaymentStatusListener}  listener to return result by callback
+     */
+    public void getPaymentStatus(Context context, Payment payment, GosGetPaymentStatusListener getPaymentStatusListener) {
 
         GetPaymentStatusParameter parameter = new GetPaymentStatusParameter(payment.getId());
 
-        networkManager.getPaymentStatus(parameter, getPaymentStatusListener);
+        networkManager.getPaymentStatus(context, parameter, getPaymentStatusListener);
     }
 
 }

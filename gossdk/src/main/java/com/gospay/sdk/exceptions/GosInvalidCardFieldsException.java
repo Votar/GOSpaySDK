@@ -3,7 +3,7 @@ package com.gospay.sdk.exceptions;
 /**
  * Created by bertalt on 14.09.16.
  */
-public class GosInvalidInputException extends Exception {
+public final class GosInvalidCardFieldsException extends Exception {
 
     private GosInputField value;
 
@@ -13,7 +13,7 @@ public class GosInvalidInputException extends Exception {
 
 
 
-    public GosInvalidInputException(String message, GosInputField value) {
+    public GosInvalidCardFieldsException(String message, GosInputField value) {
         super(message);
         this.value = value;
     }

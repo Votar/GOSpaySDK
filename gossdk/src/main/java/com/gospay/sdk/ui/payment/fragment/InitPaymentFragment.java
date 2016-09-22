@@ -3,13 +3,12 @@ package com.gospay.sdk.ui.payment.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,8 +24,6 @@ import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
 import com.gospay.sdk.exceptions.GosSdkException;
-import com.gospay.sdk.ui.dialog.card.select.CardListAdapter;
-import com.gospay.sdk.ui.dialog.card.select.OnCardClickListener;
 import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.ui.widget.InfinitePagerAdapter;
 import com.gospay.sdk.ui.widget.InfiniteViewPager;
@@ -43,19 +40,22 @@ import java.util.List;
 public class InitPaymentFragment extends Fragment {
 
     public static String TAG = InitPaymentFragment.class.getSimpleName();
-    private TextView tvCurrency, tvDescr, tvAmount, tvOrderId, emptyView;
-
+    private TextView tvCurrency, tvDescr, tvAmount, tvOrderId;
+    private ImageView ivLeft, ivRight;
     private CardViewModel selectedCard;
     private ImageButton btnConfirm;
     private PaymentFields paymentFields;
     private Payment paymentInProgress;
     private View cardProgressBar;
     private ProgressBar requestProgress;
+    private LinearLayout payBlock;
+    private List<CardViewModel> listCards = new ArrayList<>();
 
     //private RecyclerView recyclerView;
     //private CardListAdapter cardListAdapter;
 
     private InfiniteViewPager mPager;
+    private View cardPickerView;
     private InfinitePagerAdapter infinitePagerAdapter;
     private View myView;
 
@@ -82,10 +82,15 @@ public class InitPaymentFragment extends Fragment {
             tvOrderId = (TextView) myView.findViewById(R.id.fragment_payment_order_id);
             btnConfirm = (ImageButton) myView.findViewById(R.id.fragment_payment_init_btn_next);
 
+            ivLeft =(ImageView)myView.findViewById(R.id.button_pager_left);
+            ivLeft.setOnClickListener(onClickLeft);
+            ivRight = (ImageView)myView.findViewById(R.id.button_pager_right);
+            ivRight.setOnClickListener(onClickRight);
+            cardPickerView = myView.findViewById(R.id.init_recycler_card);
             requestProgress = (ProgressBar) myView.findViewById(R.id.init_request_progress);
-
+            payBlock = (LinearLayout)myView.findViewById(R.id.ll_pay_block);
             mPager = (InfiniteViewPager) myView.findViewById(R.id.payment_card_recycler);
-            emptyView = (TextView) myView.findViewById(R.id.init_select_card_empty_view);
+//            emptyView = (TextView) myView.findViewById(R.id.init_select_card_empty_view);
             cardProgressBar = myView.findViewById(R.id.init_select_card_progress);
 
             btnConfirm.setOnClickListener(onClickPay);
@@ -121,7 +126,7 @@ public class InitPaymentFragment extends Fragment {
         tvCurrency.setText(paymentFields.getCurrency().getCurrencyCode());
 
         if (mPager.getAdapter() == null) {
-            List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
+            final List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
             if (list.size() != 0) {
                 setupRecycler(list);
             } else {
@@ -134,9 +139,10 @@ public class InitPaymentFragment extends Fragment {
                     @Override
                     public void onGetCardListFailure(String message) {
 
-                        PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(new ArrayList<CardViewModel>());
+                        listCards.clear();
+                        PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(listCards);
                         infinitePagerAdapter = new InfinitePagerAdapter(adapter);
-                        emptyView.setText(message);
+//                        emptyView.setText(message);
                         setupView();
                     }
                 });
@@ -146,13 +152,15 @@ public class InitPaymentFragment extends Fragment {
 
     private void setupRecycler(List<CardViewModel> cardList) {
 
-        PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(cardList);
+        listCards.clear();
+        listCards.addAll(cardList);
+        PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(listCards);
+
         infinitePagerAdapter = new InfinitePagerAdapter(adapter);
         /*RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mPager.setLayoutManager(layoutManager);*/
         mPager.setOffscreenPageLimit(adapter.getCount());
         if (adapter.getCount() > 1) {
-
             mPager.setClipToPadding(false);
             mPager.setPageMargin(getResources().getDimensionPixelSize(R.dimen.pager_margin));
 
@@ -165,9 +173,12 @@ public class InitPaymentFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
+            if (listCards != null)
+                selectedCard = listCards.get(mPager.getCurrentItem());
+
             if (selectedCard != null) {
                 InitPaymentParameter parameter = new InitPaymentParameter(selectedCard.getCardId(), paymentFields);
-                GosNetworkManager.getInstance().initPayment(parameter, gosInitPaymentListener);
+                GosNetworkManager.getInstance().initPayment(getContext(), parameter, gosInitPaymentListener);
                 requestProgress.setVisibility(View.VISIBLE);
             } else
                 Toast.makeText(getContext(), getString(R.string.hint_select_card), Toast.LENGTH_SHORT).show();
@@ -175,10 +186,18 @@ public class InitPaymentFragment extends Fragment {
         }
     };
 
-    OnCardClickListener onCardClickListener = new OnCardClickListener() {
+    private View.OnClickListener onClickLeft = new View.OnClickListener() {
         @Override
-        public void OnItemClicked(CardViewModel cardViewModel) {
-            selectedCard = cardViewModel;
+        public void onClick(View v) {
+            if(mPager != null)
+                mPager.setCurrentItem(mPager.getCurrentItem()-1, true);
+        }
+    };
+    private View.OnClickListener onClickRight= new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if(mPager != null)
+                mPager.setCurrentItem(mPager.getCurrentItem()+1, true);
         }
     };
 
@@ -213,11 +232,11 @@ public class InitPaymentFragment extends Fragment {
                 .commit();
         ((PaymentProcessingActivity) getActivity()).setTag(ConfirmPaymentFragment.TAG);
 
-        btnConfirm.setVisibility(View.GONE);
-        mPager.setVisibility(View.GONE);
+        cardPickerView.setVisibility(View.GONE);
+        payBlock.setVisibility(View.GONE);
 
         paymentInProgress = null;
-        requestProgress.setVisibility(View.GONE);
+
     }
 
     private void setupView() {
@@ -225,21 +244,21 @@ public class InitPaymentFragment extends Fragment {
         if (infinitePagerAdapter == null) {
             if (cardProgressBar != null && mPager != null) {
                 mPager.setVisibility(View.GONE);
-                emptyView.setVisibility(View.GONE);
+//                emptyView.setVisibility(View.GONE);
                 cardProgressBar.setVisibility(View.VISIBLE);
 
             }
         } else {
             if (infinitePagerAdapter.getCount() == 0) {
-                if (emptyView != null && mPager != null) {
+                if (mPager != null) {  //emptyView != null &&
                     mPager.setVisibility(View.GONE);
                     cardProgressBar.setVisibility(View.GONE);
-                    emptyView.setVisibility(View.VISIBLE);
+//                    emptyView.setVisibility(View.VISIBLE);
 
                 }
             } else {
-                if (emptyView != null && mPager != null && cardProgressBar != null) {
-                    emptyView.setVisibility(View.GONE);
+                if (mPager != null && cardProgressBar != null) {  //emptyView != null &&
+//                    emptyView.setVisibility(View.GONE);
                     cardProgressBar.setVisibility(View.GONE);
                     mPager.setVisibility(View.VISIBLE);
                 }

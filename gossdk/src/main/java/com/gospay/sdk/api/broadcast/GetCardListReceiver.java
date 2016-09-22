@@ -36,7 +36,7 @@ public class GetCardListReceiver extends BroadcastReceiver {
         String json = intent.getStringExtra(NetworkService.NetworkContract.KEY_RESPONSE);
 
         Logger.LOGD("Receiver intent");
-
+        
         GosResponse response = gson.fromJson(json, GosResponse.class);
 
         if (response == null) {

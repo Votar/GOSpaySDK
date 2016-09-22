@@ -3,6 +3,7 @@ package com.gospay.sdk.ui.payment.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
+import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.util.CreditCardValidator;
@@ -33,7 +35,7 @@ public class ConfirmPaymentFragment extends Fragment {
     public static final String KEY_CARD_VIEW = "bundle_key_card_view";
     public static final String KEY_PAYMENT_FIELDS = "bundle_key_payment_fields";
     public static final String TAG = ConfirmPaymentFragment.class.getSimpleName();
-    private TextView tvCurrency, tvDescr, tvAmount, tvOrderId, tvCardMask, tvCardAlias;
+    private TextView tvCardMask, tvCardAlias;
     private EditText etCvv;
     private ProgressBar requestProgress;
     private CardViewModel selectedCard;
@@ -41,7 +43,7 @@ public class ConfirmPaymentFragment extends Fragment {
     private Button btnConfirm;
     private Payment payment;
     private CardViewModel cardViewModel;
-    private android.support.v7.widget.CardView cardLayout;
+    private CardView cardLayout;
     private boolean shouldShowNext;
     private Gson gson = new Gson();
 
@@ -56,17 +58,17 @@ public class ConfirmPaymentFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        if(view == null)
-        view = (ViewGroup) inflater.inflate(R.layout.com_gos_confirm_payment_fragment, container, false);
+        if (view == null)
+            view = (ViewGroup) inflater.inflate(R.layout.com_gos_confirm_payment_fragment, container, false);
 
         tvCardAlias = (TextView) view.findViewById(R.id.card_view_card_alias);
         tvCardMask = (TextView) view.findViewById(R.id.card_view_card_mask);
-        requestProgress = (ProgressBar)view.findViewById(R.id.confirm_request_progress);
-        btnConfirm = (Button)view.findViewById(R.id.fragment_payment_confirm_btn_next);
+        requestProgress = (ProgressBar) view.findViewById(R.id.confirm_request_progress);
+        btnConfirm = (Button) view.findViewById(R.id.fragment_payment_confirm_btn_next);
         btnConfirm.setOnClickListener(onClickConfirm);
-        cardLayout = (android.support.v7.widget.CardView)view.findViewById(R.id.layout_card_view);
+        cardLayout = (android.support.v7.widget.CardView) view.findViewById(R.id.layout_card_view);
 
-        etCvv = (EditText)view.findViewById(R.id.confirm_payment_edit_cvv);
+        etCvv = (EditText) view.findViewById(R.id.confirm_payment_edit_cvv);
         bindView();
         return view;
 
@@ -104,15 +106,18 @@ public class ConfirmPaymentFragment extends Fragment {
         }
     }
 
-    private View.OnClickListener onClickConfirm= new View.OnClickListener() {
+    private View.OnClickListener onClickConfirm = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            if(CreditCardValidator.isCvvValid(etCvv.getText().toString())) {
-                GosSdkManager.getInstance().confirmPayment(payment, etCvv.getText().toString(), gosConfirmListener);
+            try {
+                GosSdkManager.getInstance().confirmPayment(getContext(),payment, etCvv.getText().toString(), gosConfirmListener);
                 requestProgress.setVisibility(View.VISIBLE);
-            }else
-                Toast.makeText(getContext(),getString(R.string.error_invalid_cvv), Toast.LENGTH_SHORT).show();
+
+            } catch (GosInvalidCardFieldsException e) {
+                Toast.makeText(getContext(), getString(R.string.error_invalid_cvv), Toast.LENGTH_SHORT).show();
+            }
+
+
         }
 
     };
@@ -133,7 +138,7 @@ public class ConfirmPaymentFragment extends Fragment {
 
         @Override
         public void onFailureConfirmationPayment(String message) {
-            Toast.makeText(getContext(),getString(R.string.error_from_server,message), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.error_from_server, message), Toast.LENGTH_SHORT).show();
             requestProgress.setVisibility(View.GONE);
         }
     };

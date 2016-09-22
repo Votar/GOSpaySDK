@@ -9,7 +9,9 @@
     <application>
         <service android:name=".api.service.NetworkService" />
 
-        <activity android:name=".ui.payment.PaymentProcessingActivity"></activity>
+        <activity
+            android:name=".ui.payment.PaymentProcessingActivity"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>

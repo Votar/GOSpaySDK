@@ -2,12 +2,8 @@ package com.gospay.sdk.api.request.models.card;
 
 import android.support.annotation.Nullable;
 
-import com.gospay.sdk.exceptions.GosInvalidInputException;
-import com.gospay.sdk.exceptions.GosSdkException;
+import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.util.CreditCardValidator;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 /**
  * Created by bertalt on 30.08.16.
@@ -31,32 +27,32 @@ public final class CardFields {
         this.alias = alias;
     }
 
-    public static CardFields create(String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName) throws GosInvalidInputException{
+    public static CardFields create(String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName) throws GosInvalidCardFieldsException {
 
         String message;
 
         if(!CreditCardValidator.isCardValid(cardNumber)) {
 
-            throw new GosInvalidInputException(String.format("Credit card %1$16s is not valid", cardNumber), GosInvalidInputException.GosInputField.CARD_NUMBER);
+            throw new GosInvalidCardFieldsException(String.format("Credit card %1$16s is not valid", cardNumber), GosInvalidCardFieldsException.GosInputField.CARD_NUMBER);
         }
 
         if(!CreditCardValidator.isExpireMonthValid(expireMonth)){
 
-            throw new GosInvalidInputException(String.format("Expire month %1$2s is not valid", expireMonth), GosInvalidInputException.GosInputField.EXPIRE_MONTH);
+            throw new GosInvalidCardFieldsException(String.format("Expire month %1$2s is not valid", expireMonth), GosInvalidCardFieldsException.GosInputField.EXPIRE_MONTH);
         }
 
         if(!CreditCardValidator.isExpireYearValid(expireYear)){
 
-            throw new GosInvalidInputException(String.format("Expire year %1$2s is not valid", expireYear), GosInvalidInputException.GosInputField.EXPIRE_YEAR);
+            throw new GosInvalidCardFieldsException(String.format("Expire year %1$2s is not valid", expireYear), GosInvalidCardFieldsException.GosInputField.EXPIRE_YEAR);
         }
         if(!CreditCardValidator.isExpireDateValid(expireMonth, expireYear)){
 
-            throw  new GosInvalidInputException(String.format("Expire date %1$4s is not valid", expireMonth+expireYear), GosInvalidInputException.GosInputField.EXPIRE_DATE);
+            throw  new GosInvalidCardFieldsException(String.format("Expire date %1$4s is not valid", expireMonth+expireYear), GosInvalidCardFieldsException.GosInputField.EXPIRE_DATE);
         }
 
         if(!CreditCardValidator.isCvvValid(cvv)){
 
-            throw new GosInvalidInputException(String.format("CVV %1$3s is not valid", cvv), GosInvalidInputException.GosInputField.CVV);
+            throw new GosInvalidCardFieldsException(String.format("CVV %1$3s is not valid", cvv), GosInvalidCardFieldsException.GosInputField.CVV);
         }
 
         return new CardFields(cardNumber, expireMonth+expireYear, cvv, cardName);

@@ -22,6 +22,7 @@ import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
+import com.gospay.sdk.exceptions.GosInvalidPaymentFieldsException;
 import com.gospay.sdk.util.UiUtil;
 import com.gospay.sdk.ui.dialog.card.select.CardListAdapter;
 import com.gospay.sdk.ui.dialog.card.select.OnCardClickListener;
@@ -44,14 +45,12 @@ public final class PaymentDialog extends DialogFragment {
     private PaymentFields paymentFields;
 
 
+    public static final String KEY_CURRENCY = "bundle_currency";
+    public static final String KEY_DESCRIPTION = "bundle_descr";
+    public static final String KEY_AMOUNT = "bundle_amount";
+    public static final String KEY_ORDER_ID = "bundle_order";
 
-
-    public static final String KEY_CURRENCY="bundle_currency";
-    public static final String KEY_DESCRIPTION="bundle_descr";
-    public static final String KEY_AMOUNT="bundle_amount";
-    public static final String KEY_ORDER_ID="bundle_order";
-
-    public static PaymentDialog newInstance(){
+    public static PaymentDialog newInstance() {
         return new PaymentDialog();
     }
 
@@ -72,8 +71,7 @@ public final class PaymentDialog extends DialogFragment {
     }
 
 
-
-    private Dialog buildDialog(){
+    private Dialog buildDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
@@ -81,15 +79,15 @@ public final class PaymentDialog extends DialogFragment {
 
         recyclerView = (RecyclerView) view.findViewById(R.id.payment_card_recycler);
 
-        btnPay = (Button)view.findViewById(R.id.dialog_payment_btn_pay);
+        btnPay = (Button) view.findViewById(R.id.dialog_payment_btn_pay);
         btnPay.setOnClickListener(onClickPay);
 
         builder.setView(view);
 
-        tvAmount = (TextView)view.findViewById(R.id.dialog_payment_amount);
-        tvCurrency = (TextView)view.findViewById(R.id.dialog_payment_currency);
-        tvDescr = (TextView)view.findViewById(R.id.dialog_payment_description);
-        tvOrderId = (TextView)view.findViewById(R.id.dialog_payment_order_id);
+        tvAmount = (TextView) view.findViewById(R.id.dialog_payment_amount);
+        tvCurrency = (TextView) view.findViewById(R.id.dialog_payment_currency);
+        tvDescr = (TextView) view.findViewById(R.id.dialog_payment_description);
+        tvOrderId = (TextView) view.findViewById(R.id.dialog_payment_order_id);
 
         bindView();
 
@@ -100,13 +98,12 @@ public final class PaymentDialog extends DialogFragment {
         @Override
         public void onClick(View v) {
 
-            if(selectedCard != null)
-            {
+            if (selectedCard != null) {
                 InitPaymentParameter parameter = new InitPaymentParameter(selectedCard.getCardId(), paymentFields);
-                GosNetworkManager.getInstance().initPayment(parameter, gosInitPaymentListener);
+                GosNetworkManager.getInstance().initPayment(getContext(),parameter, gosInitPaymentListener);
                 UiUtil.showDefaultProgressDialog(getActivity());
                 dismiss();
-            }else
+            } else
                 Toast.makeText(getContext(), getString(R.string.hint_select_card), Toast.LENGTH_SHORT).show();
 
         }
@@ -119,31 +116,35 @@ public final class PaymentDialog extends DialogFragment {
         super.onDestroyView();
     }
 
-    private void bindView(){
+    private void bindView() {
 
         Bundle args = getArguments();
 
-        if(args != null){
+        if (args != null) {
 
-            paymentFields = new PaymentFields(args.getDouble(KEY_AMOUNT), args.getString(KEY_CURRENCY), args.getString(KEY_DESCRIPTION), args.getString(KEY_ORDER_ID));
+            try {
+                paymentFields = PaymentFields.create(args.getDouble(KEY_AMOUNT), args.getString(KEY_CURRENCY), args.getString(KEY_DESCRIPTION), args.getString(KEY_ORDER_ID));
 
-            tvDescr.setText(paymentFields.getDescription());
-            tvOrderId.setText(paymentFields.getOrder());
-            tvAmount.setText(String.valueOf(paymentFields.getPrice()));
-            tvCurrency.setText(paymentFields.getCurrency().getCurrencyCode());
+                tvDescr.setText(paymentFields.getDescription());
+                tvOrderId.setText(paymentFields.getOrder());
+                tvAmount.setText(String.valueOf(paymentFields.getPrice()));
+                tvCurrency.setText(paymentFields.getCurrency().getCurrencyCode());
+            } catch (GosInvalidPaymentFieldsException e) {
+                e.printStackTrace();
+            }
         }
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
 
         List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
-        if(list.size() != 0) {
+        if (list.size() != 0) {
             cardListAdapter = new CardListAdapter(list, onCardClickListener);
             recyclerView.setAdapter(cardListAdapter);
-        }else{
+        } else {
             Toast.makeText(getContext(), "Empty list", Toast.LENGTH_SHORT).show();
         }
 
-        }
+    }
 
     OnCardClickListener onCardClickListener = new OnCardClickListener() {
         @Override

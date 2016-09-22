@@ -17,7 +17,6 @@ public class PaymentProcessingActivity extends AppCompatActivity {
 
     private static final String TAG = PaymentProcessingActivity.class.getName();
 
-    private Fragment currentFragment;
     private String mTagCurrentFragment;
     private static String KEY_CURRENT_TAG = "instance_key_current_tag";
 
@@ -55,16 +54,6 @@ public class PaymentProcessingActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
         if (savedInstanceState != null)
             mTagCurrentFragment = savedInstanceState.getString(KEY_CURRENT_TAG);
-    }
-
-    private void showCurrentFragment(String tag) {
-
-        FragmentManager fm = getSupportFragmentManager();
-        currentFragment = fm.findFragmentByTag(tag);
-        if (currentFragment == null) {
-            Log.e(TAG, "Cannot find fragment by restore tag");
-            showFirstFragment(fm);
-        }
     }
 
     private void showFirstFragment(FragmentManager fm) {
