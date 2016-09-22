@@ -16,4 +16,5 @@
     <dimen name="content_padding">16dp</dimen>
     <dimen name="text_size_card_normal">14sp</dimen>
     <dimen name="text_size_card_big">20sp</dimen>
+    <dimen name="pager_margin">55dp</dimen>
 </resources>
