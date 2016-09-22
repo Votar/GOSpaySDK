@@ -140,10 +140,7 @@ public class InitPaymentFragment extends Fragment {
                     public void onGetCardListFailure(String message) {
 
                         listCards.clear();
-                        PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(listCards);
-                        infinitePagerAdapter = new InfinitePagerAdapter(adapter);
-//                        emptyView.setText(message);
-                        setupView();
+                        setupRecycler(listCards);
                     }
                 });
             }
@@ -151,6 +148,8 @@ public class InitPaymentFragment extends Fragment {
     }
 
     private void setupRecycler(List<CardViewModel> cardList) {
+
+        cardPickerView.setVisibility(View.VISIBLE);
 
         listCards.clear();
         listCards.addAll(cardList);
