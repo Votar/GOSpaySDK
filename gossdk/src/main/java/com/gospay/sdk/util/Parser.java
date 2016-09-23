@@ -11,8 +11,6 @@ public class Parser {
     private Parser(){}
 
     public static Gson getsInstance(){
-        if(sInstance == null)
-            new Parser();
 
         return sInstance;
     }

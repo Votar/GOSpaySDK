@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,7 +41,7 @@ public class ConfirmPaymentFragment extends Fragment {
     private ProgressBar requestProgress;
     private CardViewModel selectedCard;
     private ViewGroup view;
-    private Button btnConfirm;
+    private ImageView btnConfirm;
     private Payment payment;
     private CardViewModel cardViewModel;
     private CardView cardLayout;
@@ -64,7 +65,7 @@ public class ConfirmPaymentFragment extends Fragment {
         tvCardAlias = (TextView) view.findViewById(R.id.card_view_card_alias);
         tvCardMask = (TextView) view.findViewById(R.id.card_view_card_mask);
         requestProgress = (ProgressBar) view.findViewById(R.id.confirm_request_progress);
-        btnConfirm = (Button) view.findViewById(R.id.fragment_payment_confirm_btn_next);
+        btnConfirm = (ImageView) view.findViewById(R.id.fragment_payment_confirm_btn_next);
         btnConfirm.setOnClickListener(onClickConfirm);
         cardLayout = (android.support.v7.widget.CardView) view.findViewById(R.id.layout_card_view);
 
@@ -152,7 +153,7 @@ public class ConfirmPaymentFragment extends Fragment {
 
         fragment.setArguments(args);
         getFragmentManager().beginTransaction()
-                .replace(R.id.activity_payment_processing_fragment_container_confirm, fragment, ConfirmPaymentFragment.TAG)
+                .replace(R.id.activity_payment_processing_fragment_container, fragment, TrackPaymentFragment.TAG)
                 .commit();
         ((PaymentProcessingActivity) getActivity()).setTag(TrackPaymentFragment.TAG);
 

@@ -76,21 +76,17 @@ public class InitPaymentFragment extends Fragment {
 
         if (myView == null) {
             myView = (ViewGroup) inflater.inflate(R.layout.com_gos_init_payment_fragment, container, false);
-            tvDescr = (TextView) myView.findViewById(R.id.fragment_payment_description);
-            tvAmount = (TextView) myView.findViewById(R.id.fragment_payment_payment_amount);
-            tvCurrency = (TextView) myView.findViewById(R.id.fragment_payment_payment_currency);
-            tvOrderId = (TextView) myView.findViewById(R.id.fragment_payment_order_id);
+
             btnConfirm = (ImageButton) myView.findViewById(R.id.fragment_payment_init_btn_next);
 
-            ivLeft =(ImageView)myView.findViewById(R.id.button_pager_left);
+            ivLeft = (ImageView) myView.findViewById(R.id.button_pager_left);
             ivLeft.setOnClickListener(onClickLeft);
-            ivRight = (ImageView)myView.findViewById(R.id.button_pager_right);
+            ivRight = (ImageView) myView.findViewById(R.id.button_pager_right);
             ivRight.setOnClickListener(onClickRight);
             cardPickerView = myView.findViewById(R.id.init_recycler_card);
             requestProgress = (ProgressBar) myView.findViewById(R.id.init_request_progress);
-            payBlock = (LinearLayout)myView.findViewById(R.id.ll_pay_block);
+            payBlock = (LinearLayout) myView.findViewById(R.id.ll_pay_block);
             mPager = (InfiniteViewPager) myView.findViewById(R.id.payment_card_recycler);
-//            emptyView = (TextView) myView.findViewById(R.id.init_select_card_empty_view);
             cardProgressBar = myView.findViewById(R.id.init_select_card_progress);
 
             btnConfirm.setOnClickListener(onClickPay);
@@ -113,23 +109,20 @@ public class InitPaymentFragment extends Fragment {
 
         Bundle args = getArguments();
 
-        if (args == null) throw new GosSdkException("No data to payment view");
+        if (args == null)
+            throw new GosSdkException("No data to payment view");
 
         paymentFields = Parser.getsInstance().fromJson(args.getString(InitContract.KEY_PAYMENT_FIELDS), PaymentFields.class);
 
         if (paymentFields == null)
             throw new GosSdkException("Cannot parse bundle by key: " + InitContract.KEY_PAYMENT_FIELDS);
 
-        tvDescr.setText(paymentFields.getDescription());
-        tvOrderId.setText(paymentFields.getOrder());
-        tvAmount.setText(String.valueOf(paymentFields.getPrice()));
-        tvCurrency.setText(paymentFields.getCurrency().getCurrencyCode());
 
         if (mPager.getAdapter() == null) {
             final List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
-            if (list.size() != 0) {
+            if (list.size() != 0)
                 setupRecycler(list);
-            } else {
+            else
                 GosSdkManager.getInstance().getCardList(getActivity(), new GosGetCardListListener() {
                     @Override
                     public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
@@ -143,7 +136,7 @@ public class InitPaymentFragment extends Fragment {
                         setupRecycler(listCards);
                     }
                 });
-            }
+
         }
     }
 
@@ -188,15 +181,15 @@ public class InitPaymentFragment extends Fragment {
     private View.OnClickListener onClickLeft = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(mPager != null)
-                mPager.setCurrentItem(mPager.getCurrentItem()-1, true);
+            if (mPager != null)
+                mPager.setCurrentItem(mPager.getCurrentItem() - 1, true);
         }
     };
-    private View.OnClickListener onClickRight= new View.OnClickListener() {
+    private View.OnClickListener onClickRight = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(mPager != null)
-                mPager.setCurrentItem(mPager.getCurrentItem()+1, true);
+            if (mPager != null)
+                mPager.setCurrentItem(mPager.getCurrentItem() + 1, true);
         }
     };
 
@@ -227,12 +220,14 @@ public class InitPaymentFragment extends Fragment {
         Fragment fragment = new ConfirmPaymentFragment();
         fragment.setArguments(args);
         getFragmentManager().beginTransaction()
-                .replace(R.id.activity_payment_processing_fragment_container_confirm, fragment, ConfirmPaymentFragment.TAG)
+                .replace(R.id.activity_payment_processing_fragment_container, fragment, ConfirmPaymentFragment.TAG)
                 .commit();
         ((PaymentProcessingActivity) getActivity()).setTag(ConfirmPaymentFragment.TAG);
 
-        cardPickerView.setVisibility(View.GONE);
+       /*
+       cardPickerView.setVisibility(View.GONE);
         payBlock.setVisibility(View.GONE);
+        */
 
         paymentInProgress = null;
 
