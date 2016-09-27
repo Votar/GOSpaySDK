@@ -1,6 +1,5 @@
 package com.gospay.sdk;
 
-import com.gospay.sdk.api.util.ExpireDateModel;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.util.CreditCardValidator;
 
@@ -57,19 +56,6 @@ public class CreditCardValidatorUnitTest {
         assertFalse("Cvv should be invalid", CreditCardValidator.isCvvValid("13fe"));
         assertFalse("Cvv should be invalid", CreditCardValidator.isCvvValid("-12"));
         assertFalse("Cvv should be invalid", CreditCardValidator.isCvvValid("-122"));
-    }
-
-    @Test
-    public void testExpireDateModel() throws Exception{
-
-        assertNotNull(ExpireDateModel.create("0119"));
-        assertNotNull(ExpireDateModel.create("0916"));
-        thrown.expect(GosSdkException.class);
-        assertNull(ExpireDateModel.create(null));
-        thrown.expect(GosSdkException.class);
-        assertNull(ExpireDateModel.create("1319"));
-        thrown.expect(GosSdkException.class);
-        assertNull(ExpireDateModel.create("fdst"));
     }
 
 }

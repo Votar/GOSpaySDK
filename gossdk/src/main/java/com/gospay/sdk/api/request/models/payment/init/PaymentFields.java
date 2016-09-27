@@ -1,5 +1,7 @@
 package com.gospay.sdk.api.request.models.payment.init;
 
+
+
 import com.gospay.sdk.exceptions.GosInvalidPaymentFieldsException;
 import com.gospay.sdk.util.PaymentFieldsValidator;
 

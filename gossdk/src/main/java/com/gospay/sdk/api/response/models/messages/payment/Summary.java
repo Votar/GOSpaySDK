@@ -8,6 +8,8 @@ public class Summary {
     double amount;
     String currency;
 
+    private Summary(){}
+
     public Summary(double amount, String currency) {
         this.amount = amount;
         this.currency = currency;

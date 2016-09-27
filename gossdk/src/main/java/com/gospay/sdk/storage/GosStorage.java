@@ -10,6 +10,7 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.util.TextUtils;
 
+
 /**
  * Created by bertalt on 31.08.16.
  */

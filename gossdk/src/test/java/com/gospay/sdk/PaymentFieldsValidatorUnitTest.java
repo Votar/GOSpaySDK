@@ -1,8 +1,5 @@
 package com.gospay.sdk;
 
-import com.gospay.sdk.api.util.ExpireDateModel;
-import com.gospay.sdk.exceptions.GosSdkException;
-import com.gospay.sdk.util.CreditCardValidator;
 import com.gospay.sdk.util.PaymentFieldsValidator;
 
 import org.junit.Before;
@@ -10,9 +7,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**

@@ -5,6 +5,8 @@ package com.gospay.sdk.api.response.models;
  */
 public class ResultModel {
 
+    private ResultModel(){}
+
     private int code;
     private String message;
 

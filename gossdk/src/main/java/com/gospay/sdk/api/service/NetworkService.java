@@ -145,10 +145,8 @@ public class NetworkService extends IntentService {
 
     private GosResponse callPost(GosRequest request) {
 
-        byte[] postData = new byte[0];
-        postData = request.getBody().getBytes(Charset.forName("UTF-8"));
+        byte[] postData = request.getBody().getBytes(Charset.forName("UTF-8"));
 
-        int postDataLength = postData.length;
         URL url = null;
         HttpURLConnection conn = null;
         DataOutputStream wr = null;

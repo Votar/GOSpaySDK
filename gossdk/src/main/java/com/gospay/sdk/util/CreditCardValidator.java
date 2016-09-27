@@ -3,7 +3,6 @@ package com.gospay.sdk.util;
 
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import java.util.Calendar;
 import java.util.Locale;

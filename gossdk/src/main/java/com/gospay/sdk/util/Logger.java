@@ -1,8 +1,7 @@
 package com.gospay.sdk.util;
 
-import android.util.Log;
 
-import com.gospay.sdk.BuildConfig;
+import android.util.Log;
 
 /**
  * Created by bertalt on 06.09.16.

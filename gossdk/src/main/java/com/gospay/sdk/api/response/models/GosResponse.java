@@ -2,7 +2,6 @@ package com.gospay.sdk.api.response.models;
 
 import com.google.gson.JsonElement;
 import com.google.gson.annotations.SerializedName;
-import com.gospay.sdk.util.Logger;
 
 import java.util.Arrays;
 import java.util.List;

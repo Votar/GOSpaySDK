@@ -18,8 +18,8 @@ import android.widget.Toast;
 
 import com.gospay.sdk.R;
 import com.gospay.sdk.api.GosNetworkManager;
-import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
+import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.ui.view.GosEditNumber;
 import com.gospay.sdk.util.Logger;
@@ -32,7 +32,6 @@ public class AddCardDialog extends DialogFragment {
     public static final String TAG = "AddCardDialog";
 
     private GosAddCardListener gosAddCardListener;
-    private boolean showProgress;
 
     private EditText etExpireYear,
             etExpireMonth,
@@ -41,10 +40,8 @@ public class AddCardDialog extends DialogFragment {
 
     private GosEditNumber etNumber;
 
-    private Button btnSubmit,
-            btnCancel;
+    private Button btnSubmit,btnCancel;
 
-    private ProgressDialog progressDialog;
 
     public AddCardDialog() {
 
@@ -109,14 +106,14 @@ public class AddCardDialog extends DialogFragment {
             String cardNumber = etNumber.getText().toString().replace(" ", "");
 
             try {
-                Logger.LOGD(cardNumber);
-                CardFields cardFields = CardFields.create(cardNumber,
+
+                CardFields cardFields = CardFields.create(Long.parseLong(cardNumber),
                         etExpireMonth.getText().toString(),
                         etExpireYear.getText().toString(),
                         etCvv.getText().toString(),
                         etAlias.getText().toString());
 
-                    GosNetworkManager.getInstance().addCard(getContext(),cardFields, gosAddCardListener, showProgress);
+                    GosNetworkManager.getInstance().addCard(getContext(),cardFields, gosAddCardListener);
                 dismiss();
 
             } catch (GosInvalidCardFieldsException ex) {
@@ -157,7 +154,6 @@ public class AddCardDialog extends DialogFragment {
     }
 
 
-    //Hardcode, I know,but it faster
 
     private TextWatcher cardWatcher = new TextWatcher() {
         @Override
@@ -218,6 +214,4 @@ public class AddCardDialog extends DialogFragment {
             if (s.length() == 3) requestFocus(etAlias);
         }
     };
-
-
 }

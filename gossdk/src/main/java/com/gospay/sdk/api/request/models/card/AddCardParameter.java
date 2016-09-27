@@ -1,8 +1,7 @@
 package com.gospay.sdk.api.request.models.card;
 
-import android.support.annotation.Nullable;
-
 import com.google.gson.annotations.SerializedName;
+import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.util.DeviceInfo;
 
 /**

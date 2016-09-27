@@ -2,7 +2,6 @@ package com.gospay.sdk.util;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.app.Application;
 import android.content.Context;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;

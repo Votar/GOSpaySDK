@@ -12,6 +12,8 @@ import com.gospay.sdk.api.response.models.GosResponse;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.service.NetworkService;
 import com.gospay.sdk.util.Logger;
+import com.gospay.sdk.util.Parser;
+
 
 /**
  * Created by bertalt on 19.09.16.
@@ -19,7 +21,6 @@ import com.gospay.sdk.util.Logger;
 public class AddCardReceiver extends BroadcastReceiver {
 
     private String LOG_TAG = this.getClass().getName();
-    private Gson gson = new Gson();
     private GosAddCardListener listener;
 
     public AddCardReceiver(GosAddCardListener listener) {
@@ -29,6 +30,8 @@ public class AddCardReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
+        Gson gson = Parser.getsInstance();
 
         String json = intent.getStringExtra(NetworkService.NetworkContract.KEY_RESPONSE);
 

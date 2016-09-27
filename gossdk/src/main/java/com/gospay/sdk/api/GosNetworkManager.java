@@ -2,8 +2,6 @@ package com.gospay.sdk.api;
 
 
 import android.app.Activity;
-import android.app.Application;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -16,19 +14,19 @@ import com.gospay.sdk.api.broadcast.GetCardListReceiver;
 import com.gospay.sdk.api.broadcast.GetStatusPaymentReceiver;
 import com.gospay.sdk.api.broadcast.InitPaymentReceiver;
 import com.gospay.sdk.api.client.GosRequest;
-import com.gospay.sdk.api.client.cookie.MyCookieStore;
-import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
-import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
-import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
+import com.gospay.sdk.api.client.cookie.GosCookieStore;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
+import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
+import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
+import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
+import com.gospay.sdk.api.service.NetworkService;
 import com.gospay.sdk.api.util.NetworkUtils;
 import com.gospay.sdk.exceptions.GosSdkException;
-import com.gospay.sdk.api.service.NetworkService;
 import com.gospay.sdk.storage.GosStorage;
 import com.gospay.sdk.util.Logger;
 
@@ -75,7 +73,7 @@ public final class GosNetworkManager {
         this.gson = new Gson();
         NetworkUtils.disableSSLCertificateChecking();
 
-        cookieManager = new CookieManager(new MyCookieStore(context), CookiePolicy.ACCEPT_ALL);
+        cookieManager = new CookieManager(new GosCookieStore(context), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
 //        cookieManager.getCookieStore().removeAll();
     }
@@ -99,7 +97,7 @@ public final class GosNetworkManager {
         context.startService(intent);
     }
 
-    public void addCard(Context context, CardFields fields, final GosAddCardListener listener, boolean showProgress) {
+    public void addCard(Context context, CardFields fields, final GosAddCardListener listener) {
 
         String json = gson.toJson(fields, CardFields.class);
 
@@ -123,7 +121,7 @@ public final class GosNetworkManager {
 
     }
 
-    public void initPayment(Context context,InitPaymentParameter parameter, final GosInitPaymentListener initPaymentListener) {
+    public void initPayment(Context context, InitPaymentParameter parameter, final GosInitPaymentListener initPaymentListener) {
 
         String json = gson.toJson(parameter, InitPaymentParameter.class);
 

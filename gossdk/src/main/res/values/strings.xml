@@ -33,4 +33,6 @@
 
     <string name="text_trouble_browser">\tYour browser may not support secure SSL connection, making it difficult to confirm the payment.\n\t <b>We recommend you to use another browser, example: Chrome, Safari, Firefox or Opera</b></string>
 
+    <string name="label_payment_amount">Enroller amount:</string>
+    <string name="label_payment_total">Withdraw amount:</string>
 </resources>

@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.gospay.sdk.R;
 
+
 /**
  * Created by Bertalt on 18.05.2016.
  */

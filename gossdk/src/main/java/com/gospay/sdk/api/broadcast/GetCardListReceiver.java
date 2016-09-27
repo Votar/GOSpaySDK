@@ -12,9 +12,10 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.response.models.GosResponse;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
-
 import com.gospay.sdk.api.service.NetworkService;
 import com.gospay.sdk.util.Logger;
+import com.gospay.sdk.util.Parser;
+
 
 import java.util.ArrayList;
 
@@ -23,7 +24,6 @@ import java.util.ArrayList;
  */
 public class GetCardListReceiver extends BroadcastReceiver {
 
-    private Gson gson = new Gson();
     private GosGetCardListListener listener;
 
     public GetCardListReceiver(GosGetCardListListener listListener) {
@@ -33,10 +33,12 @@ public class GetCardListReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
+        Gson gson = Parser.getsInstance();
+
         String json = intent.getStringExtra(NetworkService.NetworkContract.KEY_RESPONSE);
 
         Logger.LOGD("Receiver intent");
-        
+
         GosResponse response = gson.fromJson(json, GosResponse.class);
 
         if (response == null) {
@@ -47,18 +49,22 @@ public class GetCardListReceiver extends BroadcastReceiver {
 
             switch (resultCode) {
                 case 0:
-                    Logger.LOGNET(response.getPayload().toString());
+                    // Logger.LOGNET(response.getPayload().toString());
+
                     ArrayList<CardViewModel> resultArray = new ArrayList<CardViewModel>();
-
-                    JsonArray array = response.getPayload().getAsJsonArray();
-
-                    if (array.size() == 0)
+                    if (response.getPayload() == null)
                         listener.onGetCardListSuccess(resultArray);
                     else {
-                        for (JsonElement nextValue : array)
-                            resultArray.add(gson.fromJson(nextValue, CardViewModel.class));
+                        JsonArray array = response.getPayload().getAsJsonArray();
 
-                        listener.onGetCardListSuccess(resultArray);
+                        if (array.size() == 0)
+                            listener.onGetCardListSuccess(resultArray);
+                        else {
+                            for (JsonElement nextValue : array)
+                                resultArray.add(gson.fromJson(nextValue, CardViewModel.class));
+
+                            listener.onGetCardListSuccess(resultArray);
+                        }
                     }
                     break;
                 default:

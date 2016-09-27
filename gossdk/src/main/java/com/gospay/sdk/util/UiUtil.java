@@ -1,12 +1,10 @@
 package com.gospay.sdk.util;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.widget.ProgressBar;
 
 import com.gospay.sdk.R;
+
 
 /**
  * Created by bertalt on 15.09.16.

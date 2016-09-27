@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.util.CreditCardValidator;
 
+
 /**
  * Created by bertalt on 30.08.16.
  */
@@ -16,22 +17,19 @@ public final class CardFields {
     private String cvvCode;
     private String alias;
 
-    private CardFields() {
-    }
+    private CardFields(long number, String expire, String cvv, String alias) {
 
-    private CardFields(String number, String expire, String cvv, String alias) {
-
-        this.number = Long.parseLong(number);
+        this.number = number;
         this.expire = expire;
         this.cvvCode = cvv;
         this.alias = alias;
     }
 
-    public static CardFields create(String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName) throws GosInvalidCardFieldsException {
+    public static CardFields create(long cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardName) throws GosInvalidCardFieldsException {
 
-        String message;
+//        String message;
 
-        if(!CreditCardValidator.isCardValid(cardNumber)) {
+        if(!CreditCardValidator.isCardValid(String.valueOf(cardNumber))) {
 
             throw new GosInvalidCardFieldsException(String.format("Credit card %1$16s is not valid", cardNumber), GosInvalidCardFieldsException.GosInputField.CARD_NUMBER);
         }

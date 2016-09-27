@@ -1,7 +1,9 @@
 package com.gospay.sdk.ui.payment.fragment;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.gospay.sdk.GosSdkManager;
 import com.gospay.sdk.R;
 import com.gospay.sdk.api.GosNetworkManager;
+import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
@@ -24,6 +26,7 @@ import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
 import com.gospay.sdk.exceptions.GosSdkException;
+import com.gospay.sdk.ui.dialog.card.add.AddCardDialog;
 import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.ui.widget.InfinitePagerAdapter;
 import com.gospay.sdk.ui.widget.InfiniteViewPager;
@@ -50,7 +53,7 @@ public class InitPaymentFragment extends Fragment {
     private ProgressBar requestProgress;
     private LinearLayout payBlock;
     private List<CardViewModel> listCards = new ArrayList<>();
-
+    private GosNetworkManager networkManager = GosNetworkManager.getInstance();
     //private RecyclerView recyclerView;
     //private CardListAdapter cardListAdapter;
 
@@ -119,23 +122,19 @@ public class InitPaymentFragment extends Fragment {
 
 
         if (mPager.getAdapter() == null) {
-            final List<CardViewModel> list = GosSdkManager.getInstance().getCachedCardList();
-            if (list.size() != 0)
-                setupRecycler(list);
-            else
-                GosSdkManager.getInstance().getCardList(getActivity(), new GosGetCardListListener() {
-                    @Override
-                    public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
-                        setupRecycler(cardList);
-                    }
+            networkManager.getCardList(getActivity(), new GosGetCardListListener() {
+                @Override
+                public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
+                    setupRecycler(cardList);
+                }
 
-                    @Override
-                    public void onGetCardListFailure(String message) {
+                @Override
+                public void onGetCardListFailure(String message) {
 
-                        listCards.clear();
-                        setupRecycler(listCards);
-                    }
-                });
+                    listCards.clear();
+                    setupRecycler(listCards);
+                }
+            });
 
         }
     }
@@ -165,7 +164,7 @@ public class InitPaymentFragment extends Fragment {
         @Override
         public void onClick(View v) {
 
-            if (listCards != null)
+            if (listCards != null && !listCards.isEmpty())
                 selectedCard = listCards.get(mPager.getCurrentItem());
 
             if (selectedCard != null) {
@@ -220,10 +219,12 @@ public class InitPaymentFragment extends Fragment {
         Fragment fragment = new ConfirmPaymentFragment();
         fragment.setArguments(args);
         getFragmentManager().beginTransaction()
+                .addToBackStack(InitPaymentFragment.TAG)
                 .replace(R.id.activity_payment_processing_fragment_container, fragment, ConfirmPaymentFragment.TAG)
                 .commit();
         ((PaymentProcessingActivity) getActivity()).setTag(ConfirmPaymentFragment.TAG);
 
+        requestProgress.setVisibility(View.GONE);
        /*
        cardPickerView.setVisibility(View.GONE);
         payBlock.setVisibility(View.GONE);
@@ -248,7 +249,20 @@ public class InitPaymentFragment extends Fragment {
                     mPager.setVisibility(View.GONE);
                     cardProgressBar.setVisibility(View.GONE);
 //                    emptyView.setVisibility(View.VISIBLE);
+                    DialogFragment addCardDialog = AddCardDialog.newInstance(new GosAddCardListener() {
+                        @Override
+                        public void onSuccessAddCard(CardViewModel card) {
+                            listCards.add(card);
+                            setupRecycler(listCards);
+                        }
 
+                        @Override
+                        public void onFailureAddCard(String message) {
+                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                    addCardDialog.show(getFragmentManager(), AddCardDialog.TAG);
                 }
             } else {
                 if (mPager != null && cardProgressBar != null) {  //emptyView != null &&

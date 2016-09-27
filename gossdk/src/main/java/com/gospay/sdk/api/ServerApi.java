@@ -1,10 +1,5 @@
 package com.gospay.sdk.api;
 
-import com.google.gson.JsonElement;
-import com.gospay.sdk.api.request.models.card.CardFields;
-import com.gospay.sdk.api.response.models.GosResponse;
-
-
 /**
  * Created by bertalt on 30.08.16.
  */

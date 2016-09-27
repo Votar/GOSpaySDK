@@ -7,25 +7,26 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 
 import com.gospay.sdk.api.GosNetworkManager;
+import com.gospay.sdk.api.listeners.GosAddCardListener;
+import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
+import com.gospay.sdk.api.listeners.GosGetCardListListener;
+import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
+import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.listeners.GosSelectCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
-import com.gospay.sdk.api.listeners.GosAddCardListener;
-import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
-import com.gospay.sdk.api.listeners.GosGetCardListListener;
-import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
-import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
 import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
+import com.gospay.sdk.exceptions.GosInvalidPaymentFieldsException;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.storage.GosStorage;
-import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.ui.dialog.card.add.AddCardDialog;
 import com.gospay.sdk.ui.dialog.card.select.SelectCardDialog;
+import com.gospay.sdk.ui.payment.PaymentProcessingActivity;
 import com.gospay.sdk.util.CreditCardValidator;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
@@ -49,7 +50,7 @@ public final class GosSdkManager {
      * @param context
      * @return {@link GosSdkManager}
      */
-    public static GosSdkManager create(FragmentActivity context) {
+    public static GosSdkManager create(Context context) {
 
         ourInstance = new GosSdkManager(context);
         Logger.DEBUG = true;
@@ -73,7 +74,7 @@ public final class GosSdkManager {
     /**
      * The {@link GosSdkManager} is used to add, list cards and execute payments
      */
-    private GosSdkManager(FragmentActivity context) {
+    private GosSdkManager(Context context) {
 
         GosStorage storage = GosStorage.newInstance(context);
         networkManager = GosNetworkManager.newInstance(context);
@@ -109,11 +110,11 @@ public final class GosSdkManager {
      * @param listener
      * @throws GosInvalidCardFieldsException
      */
-    public void addCard(Context context, String cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
+    public void addCard(Context context, long cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
 
         final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expireYear, cvv, cardAlias);
 
-        networkManager.addCard(context, cardFields, listener, false);
+        networkManager.addCard(context, cardFields, listener);
 
     }
 
@@ -202,13 +203,19 @@ public final class GosSdkManager {
 
     }
 
+
     /**
-     * Executes payment processing in GOSPAY  activity
      *
      * @param activity
-     * @param paymentFields {@link PaymentFields} with payment details
+     * @param amount
+     * @param currency - in order ISO 4217
+     * @param description
+     * @param orderId
+     * @throws GosInvalidPaymentFieldsException
      */
-    public void processPaymentOneClick(FragmentActivity activity, PaymentFields paymentFields) {
+    public void processPaymentOneClick(FragmentActivity activity, double amount, String currency, String description, String orderId) throws GosInvalidPaymentFieldsException{
+
+        PaymentFields paymentFields = PaymentFields.create(amount, currency, description, orderId);
 
         Intent in = new Intent(activity, PaymentProcessingActivity.class);
 

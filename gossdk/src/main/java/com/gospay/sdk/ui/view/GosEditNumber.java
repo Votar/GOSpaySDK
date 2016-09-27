@@ -7,8 +7,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 
-import com.gospay.sdk.R;
-
 /**
  * Created by bertalt on 14.09.16.
  */

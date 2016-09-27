@@ -7,6 +7,8 @@ import com.google.gson.annotations.SerializedName;
  */
 public class CardViewModel {
 
+    private CardViewModel(){}
+
     @SerializedName("cardEntityId")
     private String cardId;
     @SerializedName("info")
@@ -21,11 +23,10 @@ public class CardViewModel {
     public String getCardMask() {
         return cardMask;
     }
-    
+
     public String getAlias() {
         return alias;
     }
-
 
 
     @Override

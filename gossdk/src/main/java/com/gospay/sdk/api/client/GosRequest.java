@@ -8,8 +8,6 @@ import android.support.annotation.Nullable;
 
 import com.gospay.sdk.api.ServerApi;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.Map;
 

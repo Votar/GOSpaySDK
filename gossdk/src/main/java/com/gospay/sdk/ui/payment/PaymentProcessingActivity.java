@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.gospay.sdk.R;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.exceptions.GosSdkException;
@@ -16,6 +14,7 @@ import com.gospay.sdk.ui.payment.fragment.InitPaymentFragment;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
 import com.gospay.sdk.util.TextUtils;
+
 
 public class PaymentProcessingActivity extends AppCompatActivity {
 
@@ -37,11 +36,12 @@ public class PaymentProcessingActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_processing);
 
+       /*
         TextView tvDescr = (TextView) findViewById(R.id.fragment_payment_description);
         TextView tvAmount = (TextView) findViewById(R.id.fragment_payment_payment_amount);
         TextView tvCurrency = (TextView) findViewById(R.id.fragment_payment_payment_currency);
         TextView tvOrderId = (TextView) findViewById(R.id.fragment_payment_order_id);
-
+        */
         Intent args = getIntent();
         if (args == null) throw new GosSdkException("Intent with fields is null");
 
@@ -49,33 +49,33 @@ public class PaymentProcessingActivity extends AppCompatActivity {
 
         if (paymentFields == null) throw new GosSdkException("Payment cannot be parsed");
 
+        if (savedInstanceState == null)
+            showFirstFragment(getSupportFragmentManager());
+/*
         tvDescr.setText(paymentFields.getDescription());
         tvOrderId.setText(paymentFields.getOrder());
         tvAmount.setText(String.valueOf(paymentFields.getPrice()));
         tvCurrency.setText(paymentFields.getCurrency().getCurrencyCode());
+        */
     }
 
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (mTagCurrentFragment != null)
-            outState.putString(KEY_CURRENT_TAG, mTagCurrentFragment);
+            outState.putString(KEY_CURRENT_TAG, "changed");
         super.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (TextUtils.isEmpty(mTagCurrentFragment))
-            showFirstFragment(getSupportFragmentManager());
-
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        if (savedInstanceState != null)
-            mTagCurrentFragment = savedInstanceState.getString(KEY_CURRENT_TAG);
+
     }
 
     private void showFirstFragment(FragmentManager fm) {
