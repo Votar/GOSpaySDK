@@ -8,7 +8,7 @@ public final class GosInvalidCardFieldsException extends Exception {
     private GosInputField value;
 
     public enum GosInputField {
-        CARD_NUMBER, EXPIRE_MONTH, EXPIRE_YEAR, EXPIRE_DATE, CVV, CARD_ALIAS;
+        CARD_NUMBER, EXPIRE_MONTH, EXPIRY_YEAR, EXPIRY_DATE, CVV, CARD_ALIAS;
     }
 
 

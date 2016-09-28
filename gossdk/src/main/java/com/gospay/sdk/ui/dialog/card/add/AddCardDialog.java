@@ -2,7 +2,6 @@ package com.gospay.sdk.ui.dialog.card.add;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -22,7 +21,6 @@ import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.ui.view.GosEditNumber;
-import com.gospay.sdk.util.Logger;
 
 /**
  * Created by bertalt on 13.09.16.
@@ -123,13 +121,13 @@ public class AddCardDialog extends DialogFragment {
                         etNumber.setError(getString(R.string.error_invalid_card_number));
                         requestFocus(etNumber);
                         break;
-                    case EXPIRE_DATE:
+                    case EXPIRY_DATE:
                     case EXPIRE_MONTH:
                         etExpireMonth.setError(getString(R.string.error_invalid_expire_month));
                         requestFocus(etExpireMonth);
                         break;
 
-                    case EXPIRE_YEAR:
+                    case EXPIRY_YEAR:
                         etExpireYear.setError(getString(R.string.error_invalid_expire_year));
                         requestFocus(etExpireYear);
                         break;

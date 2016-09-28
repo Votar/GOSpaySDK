@@ -104,15 +104,15 @@ public final class GosSdkManager {
      *
      * @param cardNumber
      * @param expireMonth
-     * @param expireYear
+     * @param expiryYear
      * @param cvv
      * @param cardAlias
      * @param listener
      * @throws GosInvalidCardFieldsException
      */
-    public void addCard(Context context, long cardNumber, String expireMonth, String expireYear, String cvv, @Nullable String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
+    public void addCard(Context context, long cardNumber, String expireMonth, String expiryYear, String cvv, String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
 
-        final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expireYear, cvv, cardAlias);
+        final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expiryYear, cvv, cardAlias);
 
         networkManager.addCard(context, cardFields, listener);
 

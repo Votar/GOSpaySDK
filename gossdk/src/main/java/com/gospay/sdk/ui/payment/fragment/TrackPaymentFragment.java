@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.gospay.sdk.R;
 import com.gospay.sdk.api.GosNetworkManager;
-import com.gospay.sdk.api.PaymentStatus;
+import com.gospay.sdk.api.request.models.payment.PaymentStatus;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
 import com.gospay.sdk.api.response.models.messages.payment.Payment;
