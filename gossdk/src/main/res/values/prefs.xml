@@ -2,5 +2,5 @@
 <resources>
     <string name="prefFieldLocale" translatable="false">userLocale</string>
     <string name="prefStorageName" translatable="false">appPrefStorage</string>
-    <string name="prefKeyToken" translatable="false">prefKeyToken</string>
+    <string name="prefKeyToken">prefKeyToken</string>
 </resources>

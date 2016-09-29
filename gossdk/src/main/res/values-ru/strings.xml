@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">GosSdk</string>
+    <string name="btn_select">Выбрать</string>
+    <string name="close">Закрыть</string>
+    <string name="error_comon_validator_error">Проверьте введеные данные</string>
+    <string name="error_from_server">Ошибка: %1s</string>
+    <string name="error_invalid_card_number">Проверьте номера карточки</string>
+    <string name="error_invalid_cvv">Проверьте CVV</string>
+    <string name="error_invalid_expire_month">Неверный месяц</string>
+    <string name="error_invalid_expire_year">Неверный год</string>
+    <string name="error_network_connection">Не соединения с сервером GOS</string>
+    <string name="error_token_is_empty">Идентификатор сессии отсутствует</string>
+    <string name="hint_select_card">Вы должны выбрать карту</string>
+    <string name="label_order_id">Заказ:</string>
+    <string name="label_payment_amount">Сумма покупки:</string>
+    <string name="label_payment_status">Статус платежа:</string>
+    <string name="label_payment_total">Сумма с комиссией:</string>
+    <string name="label_your_card">Выбранная карта</string>
+    <string name="text_alias">Название карты</string>
+    <string name="text_btn_confirm">Подтвердить</string>
+    <string name="text_btn_get_status"></string>
+    <string name="text_btn_pay">Оплатить</string>
+    <string name="text_card_number">Номер карты</string>
+    <string name="text_cvv"></string>
+    <string name="text_expiry_date">Действительный до</string>
+    <string name="text_list_is_empty">Список пуст</string>
+    <string name="text_progress_dialog">Загрузка...</string>
+    <string name="text_trouble_browser">\\tВаш браузер может не поддерживать защищенное SSL соединение, что затруднит подтверждение платежа. \\n\\t <b>Рекомендуем воспользоваться другим браузером, например: Chrome, Safari, Firefox или Opera</b></string>
+    <string name="title_init_payment">Инициализация</string>
+    <string name="ui_btn_add">Подтвердить</string>
+    <string name="ui_btn_cancel">Отмена</string>
+</resources>

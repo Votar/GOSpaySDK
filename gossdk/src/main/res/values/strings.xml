@@ -1,12 +1,12 @@
 <resources>
 
     <string name="error_network_connection">No connection with GOS server</string>
-    <string name="app_name">GosSdk</string>
+    <string name="app_name" translatable="false">GosSdk</string>
     <string name="error_token_is_empty">Token is empty</string>
     <string name="text_card_number">Card number</string>
     <string name="text_expiry_date">Expiry date</string>
-    <string name="CCV">CVV</string>
-    <string name="text_cvv">CVV</string>
+    <string name="CCV" translatable="false">CVV</string>
+    <string name="text_cvv" translatable="false">CVV</string>
     <string name="text_alias">card alias</string>
     <string name="ui_btn_add">Submit</string>
     <string name="ui_btn_cancel">Cancel</string>
@@ -26,11 +26,10 @@
     <string name="label_your_card">Selected card</string>
     <string name="text_btn_confirm">Confirm</string>
     <string name="label_payment_status">Payment status:</string>
-    <string name="text_btn_get_status">check</string>
     <string name="error_from_server">Error: %1s</string>
 
     <string name="close">Close</string>
-    <string name="ok">ok</string>
+    <string name="ok" translatable="false">ok</string>
 
     <string name="text_trouble_browser">\tYour browser may not support secure SSL connection, making it difficult to confirm the payment.\n\t <b>We recommend you to use another browser, example: Chrome, Safari, Firefox or Opera</b></string>
 
