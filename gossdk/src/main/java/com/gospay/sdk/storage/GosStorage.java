@@ -18,7 +18,6 @@ public final class GosStorage {
     private static GosStorage ourInstance;
     private SharedPreferences prefStorage;
     private static final String DEFAULT_ID = "-1";
-    private String mApiKey;
 
     private interface StorageContract {
         String KEY_API_KEY = "pref_api_key";
@@ -71,12 +70,12 @@ public final class GosStorage {
             e.printStackTrace();
         }
         Bundle bundle = ai.metaData;
-        mApiKey = bundle.getString("com.gospay.sdk.V1");
+        String mApiKey = bundle.getString("com.gospay.sdk.V1");
 
         if (TextUtils.isEmpty(mApiKey))
             throw new GosSdkException("Cannot find GOS API KEY ");
 
-        prefStorage.edit().putString(StorageContract.KEY_API_KEY, mApiKey).apply();
+        prefStorage.edit().putString(StorageContract.KEY_API_KEY, mApiKey).commit();
     }
 
 

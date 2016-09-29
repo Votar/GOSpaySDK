@@ -1,10 +1,11 @@
 <resources>
+
+    <string name="error_network_connection">No connection with GOS server</string>
     <string name="app_name">GosSdk</string>
     <string name="error_token_is_empty">Token is empty</string>
     <string name="text_card_number">Card number</string>
     <string name="text_expiry_date">Expiry date</string>
     <string name="CCV">CVV</string>
-    <string name="error_network_connection">No connection with server</string>
     <string name="text_cvv">CVV</string>
     <string name="text_alias">card alias</string>
     <string name="ui_btn_add">Submit</string>

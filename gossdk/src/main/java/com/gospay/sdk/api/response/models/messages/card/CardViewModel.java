@@ -13,8 +13,8 @@ public class CardViewModel {
     private String cardId;
     @SerializedName("info")
     private String cardMask;
-    @SerializedName("alias")
-    private String alias;
+    @SerializedName("cardAlias")
+    private String cardAlias;
 
     public String getCardId() {
         return cardId;
@@ -24,8 +24,8 @@ public class CardViewModel {
         return cardMask;
     }
 
-    public String getAlias() {
-        return alias;
+    public String getCardAlias() {
+        return cardAlias;
     }
 
 
@@ -34,7 +34,7 @@ public class CardViewModel {
         return "CardViewModel{" +
                 "cardId='" + cardId + '\'' +
                 ", cardMask='" + cardMask + '\'' +
-                ", alias='" + alias + '\'' +
+                ", cardAlias='" + cardAlias + '\'' +
                 '}';
     }
 }

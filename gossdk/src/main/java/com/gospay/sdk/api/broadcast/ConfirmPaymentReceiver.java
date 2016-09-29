@@ -9,7 +9,7 @@ import com.google.gson.Gson;
 import com.gospay.sdk.R;
 import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.response.models.GosResponse;
-import com.gospay.sdk.api.service.NetworkService;
+import com.gospay.sdk.api.service.GosNetworkService;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
 
@@ -29,7 +29,7 @@ public class ConfirmPaymentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        String json = intent.getStringExtra(NetworkService.NetworkContract.KEY_RESPONSE);
+        String json = intent.getStringExtra(GosNetworkService.NetworkContract.KEY_RESPONSE);
         Logger.LOGD("Receiver intent");
 
         Gson gson = Parser.getsInstance();

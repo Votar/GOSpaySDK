@@ -6,7 +6,7 @@ package com.gospay.sdk.api.client;
 
 import android.support.annotation.Nullable;
 
-import com.gospay.sdk.api.ServerApi;
+import com.gospay.sdk.api.GosServerApi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class GosRequest {
 
-    private StringBuilder url = new StringBuilder().append(ServerApi.BACKEND_URL);
+    private StringBuilder url = new StringBuilder().append(GosServerApi.BACKEND_URL);
     private String requestAction;
     private String body;
     private String method;

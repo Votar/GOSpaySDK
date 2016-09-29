@@ -3,8 +3,7 @@ package com.gospay.sdk.api.client.cookie;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.gospay.sdk.api.ServerApi;
-import com.gospay.sdk.storage.GosStorage;
+import com.gospay.sdk.api.GosServerApi;
 
 import java.net.CookieStore;
 import java.net.HttpCookie;
@@ -28,7 +27,7 @@ public class GosCookieStore implements CookieStore {
      */
     private Map<URI, List<HttpCookie>> mapCookies = new HashMap<URI, List<HttpCookie>>();
 
-    URI serverURI = URI.create(ServerApi.BACKEND_URL);
+    URI serverURI = URI.create(GosServerApi.BACKEND_URL);
     /*
      * The instance of the shared preferences
      */

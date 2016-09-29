@@ -10,7 +10,7 @@ import com.gospay.sdk.R;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.response.models.GosResponse;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
-import com.gospay.sdk.api.service.NetworkService;
+import com.gospay.sdk.api.service.GosNetworkService;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
 
@@ -33,7 +33,7 @@ public class AddCardReceiver extends BroadcastReceiver {
 
         Gson gson = Parser.getsInstance();
 
-        String json = intent.getStringExtra(NetworkService.NetworkContract.KEY_RESPONSE);
+        String json = intent.getStringExtra(GosNetworkService.NetworkContract.KEY_RESPONSE);
 
         Logger.LOGD(LOG_TAG, "Receiver intent by LocalBroadcast");
 

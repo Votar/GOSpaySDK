@@ -14,6 +14,8 @@ public final class CardFields {
 
     private long number;
     private String expire;
+
+
     private String cvvCode;
     private String alias;
 

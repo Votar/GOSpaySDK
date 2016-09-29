@@ -24,7 +24,7 @@ import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
-import com.gospay.sdk.api.service.NetworkService;
+import com.gospay.sdk.api.service.GosNetworkService;
 import com.gospay.sdk.api.util.NetworkUtils;
 import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.sdk.storage.GosStorage;
@@ -81,17 +81,17 @@ public final class GosNetworkManager {
 
     public void getCardList(Activity context, GosGetCardListListener listListener) {
 
-        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.GET_CARD_LIST,
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.GET_CARD_LIST,
                 null,
-                ServerApi.GOS_METHODS.GET);
+                GosServerApi.GOS_METHODS.GET);
 
         setupDefaultHeaders(request);
 
-        Intent intent = new Intent(context, NetworkService.class);
-        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
         GetCardListReceiver receiver = new GetCardListReceiver(listListener);
-        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_GET_CARD_LIST);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_GET_CARD_LIST);
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
         context.startService(intent);
@@ -103,17 +103,17 @@ public final class GosNetworkManager {
 
         Logger.LOGNET("toJson = \n" + json);
 
-        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.ADD_CARD,
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.ADD_CARD,
                 json,
-                ServerApi.GOS_METHODS.POST);
+                GosServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        Intent intent = new Intent(context, NetworkService.class);
-        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
         AddCardReceiver receiver = new AddCardReceiver(listener);
-        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_ADD_CARD);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_ADD_CARD);
 
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
@@ -125,17 +125,17 @@ public final class GosNetworkManager {
 
         String json = gson.toJson(parameter, InitPaymentParameter.class);
 
-        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.INIT_PAYMENT,
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.INIT_PAYMENT,
                 json,
-                ServerApi.GOS_METHODS.POST);
+                GosServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        Intent intent = new Intent(context, NetworkService.class);
-        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
         InitPaymentReceiver receiver = new InitPaymentReceiver(initPaymentListener);
-        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_INIT_PAYMENT);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_INIT_PAYMENT);
 
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
@@ -149,17 +149,17 @@ public final class GosNetworkManager {
 
         Logger.LOGNET("toJson = \n" + parameter.toString());
 
-        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.CONFIRM_PAYMENT,
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.CONFIRM_PAYMENT,
                 json,
-                ServerApi.GOS_METHODS.POST);
+                GosServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        Intent intent = new Intent(context, NetworkService.class);
-        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
         ConfirmPaymentReceiver receiver = new ConfirmPaymentReceiver(listener);
-        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_CONFIRM_PAYMENT);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_CONFIRM_PAYMENT);
 
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
@@ -172,17 +172,17 @@ public final class GosNetworkManager {
 
         String json = gson.toJson(parameter, GetPaymentStatusParameter.class);
 
-        final GosRequest request = new GosRequest(ServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS,
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS,
                 json,
-                ServerApi.GOS_METHODS.POST);
+                GosServerApi.GOS_METHODS.POST);
 
         setupDefaultHeaders(request);
 
-        Intent intent = new Intent(context, NetworkService.class);
-        intent.putExtra(NetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
 
         GetStatusPaymentReceiver receiver = new GetStatusPaymentReceiver(listener);
-        IntentFilter intentFilter = new IntentFilter(NetworkService.NetworkContract.ACTION_GET_PAYMENT_STATUS);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_GET_PAYMENT_STATUS);
 
         LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
 
@@ -193,12 +193,12 @@ public final class GosNetworkManager {
 
     private void setupDefaultHeaders(GosRequest request) {
 
-        request.addHeader(ServerApi.GOS_HEADERS.API_KEY, storage.getApiKey());
-        request.addHeader(ServerApi.GOS_HEADERS.LOCALE, storage.getLanguage());
+        request.addHeader(GosServerApi.GOS_HEADERS.API_KEY, storage.getApiKey());
+        request.addHeader(GosServerApi.GOS_HEADERS.LOCALE, storage.getLanguage());
         String JSON_TYPE = "application/json";
-        request.addHeader(ServerApi.GOS_HEADERS.CONTENT_TYPE, JSON_TYPE);
+        request.addHeader(GosServerApi.GOS_HEADERS.CONTENT_TYPE, JSON_TYPE);
         //TMP
-        request.addHeader(ServerApi.GOS_HEADERS.ORIGIN, "http://www.x-obmen.com/");
+        request.addHeader(GosServerApi.GOS_HEADERS.ORIGIN, "http://www.x-obmen.com/");
         logCookie();
     }
 
