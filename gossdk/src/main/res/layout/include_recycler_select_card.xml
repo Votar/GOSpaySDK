@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+
+    <com.gospay.ui.widget.InfiniteViewPager
+        android:id="@+id/payment_card_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="111dp" />
+
+    <ImageView
+        android:id="@+id/button_pager_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:paddingLeft="35dp"
+        android:src="@drawable/ic_arrow_left" />
+
+    <ImageView
+        android:id="@+id/button_pager_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:paddingRight="35dp"
+        android:src="@drawable/ic_arrow_right" />
+</RelativeLayout>

@@ -33,6 +33,7 @@ public class GosNetworkService extends IntentService {
         String ACTION_INIT_PAYMENT = "com.gospay.sdk.service.INIT_PAYMENT";
         String ACTION_CONFIRM_PAYMENT = "com.gospay.sdk.service.CONFIRM_PAYMENT";
         String ACTION_GET_PAYMENT_STATUS = "com.gospay.sdk.service.GET_PAYMENT_STATUS";
+        String ACTION_REMOVE_CARD = "com.gospay.sdk.service.ACTION_REMOVE_CARD";
     }
 
     static final String DEFAULT_NAME = "com.gospay.sdk.service.GosNetworkService";
@@ -98,6 +99,10 @@ public class GosNetworkService extends IntentService {
                     break;
                 case GosServerApi.GOS_REQUESTS.GET_PAYMENT_STATUS:
                     broadcastIntent = new Intent(NetworkContract.ACTION_GET_PAYMENT_STATUS)
+                            .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
+                    break;
+                case GosServerApi.GOS_REQUESTS.REMOVE_CARD:
+                    broadcastIntent = new Intent(NetworkContract.ACTION_REMOVE_CARD)
                             .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
                     break;
             }

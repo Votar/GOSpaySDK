@@ -9,7 +9,9 @@ import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
+import com.gospay.sdk.api.listeners.GosRemoveCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
+import com.gospay.sdk.api.request.models.card.RemoveCardParameter;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
@@ -109,6 +111,13 @@ public final class GosSdkManager {
 
     }
 
+    public void removeCard(Context context, CardViewModel card, GosRemoveCardListener listener){
+
+        RemoveCardParameter parameter = new RemoveCardParameter(card);
+
+        networkManager.removeCard(context,parameter, listener);
+    }
+
     /**
      *
      * @param activity
@@ -146,6 +155,8 @@ public final class GosSdkManager {
 
         networkManager.initPayment(context, parameter, listener);
     }
+
+
 
     /**
      * Executes confirmation of payment. This method usually call after {@link #initPayment(Context, CardViewModel, PaymentFields, GosInitPaymentListener) initPayment}

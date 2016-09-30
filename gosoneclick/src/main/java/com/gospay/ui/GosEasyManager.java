@@ -6,12 +6,14 @@ import android.support.v4.app.FragmentActivity;
 
 import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
+import com.gospay.sdk.api.listeners.GosSelectCardListener;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.exceptions.GosInvalidPaymentFieldsException;
 import com.gospay.sdk.storage.GosStorage;
 import com.gospay.sdk.util.Parser;
 import com.gospay.ui.card.add.AddCardDialog;
+import com.gospay.ui.card.select.SelectCardDialog;
 import com.gospay.ui.payment.PaymentProcessingActivity;
 
 import java.util.ArrayList;
@@ -25,7 +27,6 @@ public final class GosEasyManager {
 
     private GosNetworkManager networkManager;
     private static GosEasyManager ourInstance;
-    private List<CardViewModel> cardList = new ArrayList<>();
 
     private GosEasyManager(android.support.v4.app.FragmentActivity context) {
 
@@ -40,7 +41,10 @@ public final class GosEasyManager {
      * @param activity
      * @param listener
      */
-    public void addCardWithDialog(FragmentActivity activity, final GosAddCardListener listener) {
+    public static void addCardWithDialog(FragmentActivity activity, final GosAddCardListener listener) {
+
+        if(ourInstance == null)
+            ourInstance = new GosEasyManager(activity);
 
         DialogFragment fragment = AddCardDialog.newInstance(listener);
 
@@ -71,6 +75,18 @@ public final class GosEasyManager {
         in.putExtra(PaymentProcessingActivity.PaymentContract.KEY_PAYMENT_FIELDS,
                 Parser.getsInstance().toJson(paymentFields, PaymentFields.class));
         activity.startActivity(in);
+    }
+
+    public static void selectCardWithDialog(FragmentActivity activity, GosSelectCardListener listener) {
+
+        if(ourInstance == null)
+            ourInstance = new GosEasyManager(activity);
+
+        DialogFragment fragment;
+
+        fragment = SelectCardDialog.newInstance(listener);
+
+        fragment.show(activity.getSupportFragmentManager(), SelectCardDialog.TAG);
     }
 
 

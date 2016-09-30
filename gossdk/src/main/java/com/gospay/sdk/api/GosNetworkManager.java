@@ -13,6 +13,7 @@ import com.gospay.sdk.api.broadcast.ConfirmPaymentReceiver;
 import com.gospay.sdk.api.broadcast.GetCardListReceiver;
 import com.gospay.sdk.api.broadcast.GetStatusPaymentReceiver;
 import com.gospay.sdk.api.broadcast.InitPaymentReceiver;
+import com.gospay.sdk.api.broadcast.RemoveCardReceiver;
 import com.gospay.sdk.api.client.GosRequest;
 import com.gospay.sdk.api.client.cookie.GosCookieStore;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
@@ -20,10 +21,13 @@ import com.gospay.sdk.api.listeners.GosConfirmationPaymentListener;
 import com.gospay.sdk.api.listeners.GosGetCardListListener;
 import com.gospay.sdk.api.listeners.GosGetPaymentStatusListener;
 import com.gospay.sdk.api.listeners.GosInitPaymentListener;
+import com.gospay.sdk.api.listeners.GosRemoveCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
+import com.gospay.sdk.api.request.models.card.RemoveCardParameter;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
+import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.service.GosNetworkService;
 import com.gospay.sdk.api.util.NetworkUtils;
 import com.gospay.sdk.exceptions.GosSdkException;
@@ -47,6 +51,7 @@ public final class GosNetworkManager {
     private GosStorage storage;
     private CookieManager cookieManager;
     private Gson gson;
+    private final String ORIGIN;
 
     //Test
     //Production
@@ -73,9 +78,16 @@ public final class GosNetworkManager {
         this.gson = new Gson();
         NetworkUtils.disableSSLCertificateChecking();
 
+        ORIGIN = "http://" + context.getPackageName();
+
         cookieManager = new CookieManager(new GosCookieStore(context), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
-//        cookieManager.getCookieStore().removeAll();
+        clearToken();
+    }
+
+    public void clearToken() {
+        if (cookieManager != null)
+            cookieManager.getCookieStore().removeAll();
     }
 
 
@@ -120,6 +132,31 @@ public final class GosNetworkManager {
         context.startService(intent);
 
     }
+
+    public void removeCard(Context context, RemoveCardParameter parameter, final GosRemoveCardListener listener) {
+
+        String json = gson.toJson(parameter, RemoveCardParameter.class);
+
+        Logger.LOGNET("toJson = \n" + json);
+
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.REMOVE_CARD,
+                json,
+                GosServerApi.GOS_METHODS.POST);
+
+        setupDefaultHeaders(request);
+
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+
+        RemoveCardReceiver receiver = new RemoveCardReceiver(listener);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_REMOVE_CARD);
+
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
+
+        context.startService(intent);
+
+    }
+
 
     public void initPayment(Context context, InitPaymentParameter parameter, final GosInitPaymentListener initPaymentListener) {
 
@@ -198,7 +235,7 @@ public final class GosNetworkManager {
         String JSON_TYPE = "application/json";
         request.addHeader(GosServerApi.GOS_HEADERS.CONTENT_TYPE, JSON_TYPE);
         //TMP
-        request.addHeader(GosServerApi.GOS_HEADERS.ORIGIN, "http://www.x-obmen.com/");
+        request.addHeader(GosServerApi.GOS_HEADERS.ORIGIN, ORIGIN);
         logCookie();
     }
 
