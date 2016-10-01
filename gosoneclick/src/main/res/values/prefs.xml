@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="prefFieldLocale" translatable="false">userLocale</string>
+    <string name="prefStorageName" translatable="false">appPrefStorage</string>
+    <string name="prefKeyToken">prefKeyToken</string>
+</resources>

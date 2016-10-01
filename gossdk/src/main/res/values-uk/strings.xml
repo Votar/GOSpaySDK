@@ -1,31 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">GosSdk</string>
-    <string name="btn_select">Обрати</string>
-    <string name="close">Закрити</string>
-    <string name="error_comon_validator_error">Перевірте уведені данні</string>
-    <string name="error_from_server">Помилка: %1s</string>
-    <string name="error_invalid_card_number">Перевірте номер картки</string>
-    <string name="error_invalid_cvv">Перевірте CVV</string>
-    <string name="error_invalid_expire_month">Невірний місяць</string>
-    <string name="error_invalid_expire_year">Невірний рік</string>
+
     <string name="error_network_connection">Немає звязку з сермером GOS</string>
-    <string name="error_token_is_empty">Ідентифікатор зв’язку</string>
-    <string name="hint_select_card">Ви повинні обрати карту</string>
-    <string name="label_order_id">Замовлення:</string>
-    <string name="label_payment_amount">Сума покупки:</string>
-    <string name="label_payment_status">Статус платіжки:</string>
-    <string name="label_payment_total">Сума з комісією:</string>
-    <string name="label_your_card">Обрана карта</string>
-    <string name="text_alias">Назва картки</string>
-    <string name="text_btn_confirm">Підтвердити</string>
-    <string name="text_btn_pay">Сплатити</string>
-    <string name="text_card_number">Номер картки</string>
-    <string name="text_list_is_empty">Список порожній</string>
-    <string name="text_expiry_date">Дійсний до</string>
-    <string name="text_progress_dialog">Завантаження...</string>
-    <string name="text_trouble_browser">\\t Ваш браузер може не підтримувати захищене SSL з\\\'єднання, що може ускладнити підтвердження платежу.\\n\\t <b>Рекомендуємо скористатися іншим браузером, наприклад: Chrome, Safari, Firefox або Opera</b></string>
-    <string name="title_init_payment">Ініціалізація</string>
-    <string name="ui_btn_add">Підтвердити</string>
-    <string name="ui_btn_cancel">Відміна</string>
+
 </resources>

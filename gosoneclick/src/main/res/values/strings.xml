@@ -1,0 +1,37 @@
+<resources>
+
+    <string name="error_network_connection">No connection with GOS server</string>
+    <string name="error_token_is_empty">Token is empty</string>
+    <string name="text_card_number">Card number</string>
+    <string name="text_expiry_date">Expiry date</string>
+    <string name="CCV" translatable="false">CVV</string>
+    <string name="text_cvv" translatable="false">CVV</string>
+    <string name="text_alias">card alias</string>
+    <string name="ui_btn_add">Submit</string>
+    <string name="ui_btn_cancel">Cancel</string>
+    <string name="error_invalid_card_number">Invalid card number</string>
+    <string name="error_invalid_cvv">Invalid cvv  [XXX]</string>
+    <string name="error_comon_validator_error">Check inputted data</string>
+    <string name="error_invalid_expire_month">Invalid month [1–12]</string>
+    <string name="error_invalid_expire_year">Invalid year</string>
+    <string name="text_progress_dialog">Loading…</string>
+    <string name="btn_select">select</string>
+    <string name="text_list_is_empty">List is empty</string>
+    <string name="label_order_id">Order:</string>
+    <string name="text_btn_pay">pay</string>
+    <string name="hint_select_card">You should select any card</string>
+    <string name="title_init_payment">Init</string>
+
+    <string name="label_your_card">Selected card</string>
+    <string name="text_btn_confirm">Confirm</string>
+    <string name="label_payment_status">Payment status:</string>
+    <string name="error_from_server">Error: %1s</string>
+
+    <string name="close">Close</string>
+    <string name="ok" translatable="false">ok</string>
+
+    <string name="text_trouble_browser">\tYour browser may not support secure SSL connection, making it difficult to confirm the payment.\n\t <b>We recommend you to use another browser, example: Chrome, Safari, Firefox or Opera</b></string>
+
+    <string name="label_payment_amount">Enroller amount:</string>
+    <string name="label_payment_total">Withdraw amount:</string>
+</resources>

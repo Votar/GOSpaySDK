@@ -3,11 +3,11 @@ package com.gospay.ui.payment.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -46,7 +46,7 @@ public class ConfirmPaymentFragment extends Fragment {
     private ImageView btnConfirm;
     private GosPayment payment;
     private CardViewModel cardViewModel;
-    private CardView cardLayout;
+    private FrameLayout cardLayout;
     private boolean shouldShowNext;
     private Gson gson = new Gson();
     private GosNetworkManager networkManager = GosNetworkManager.getInstance();
@@ -70,7 +70,7 @@ public class ConfirmPaymentFragment extends Fragment {
             requestProgress = (ProgressBar) view.findViewById(R.id.confirm_request_progress);
             btnConfirm = (ImageView) view.findViewById(R.id.fragment_payment_confirm_btn_next);
             btnConfirm.setOnClickListener(onClickConfirm);
-            cardLayout = (android.support.v7.widget.CardView) view.findViewById(R.id.layout_card_view);
+            cardLayout = (FrameLayout) view.findViewById(R.id.layout_card_view);
 
             tvTotalAmount = (TextView) view.findViewById(R.id.fragment_payment_confirm_total_amount);
             tvTotalCurrency = (TextView) view.findViewById(R.id.fragment_payment_confirm_total_currency);
