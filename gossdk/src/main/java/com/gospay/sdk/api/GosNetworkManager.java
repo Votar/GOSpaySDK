@@ -26,6 +26,7 @@ import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.request.models.card.RemoveCardParameter;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
+import com.gospay.sdk.api.request.models.payment.init.InitPaymentWithCardParameter;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.api.service.GosNetworkService;
@@ -227,6 +228,28 @@ public final class GosNetworkManager {
 
     }
 
+    public void initPaymentWithCard(Context context, InitPaymentWithCardParameter parameter, GosInitPaymentListener listener) {
+
+        String json = gson.toJson(parameter, InitPaymentWithCardParameter.class);
+
+        final GosRequest request = new GosRequest(GosServerApi.GOS_REQUESTS.INIT_PAYMENT_WITH_CARD,
+                json,
+                GosServerApi.GOS_METHODS.POST);
+
+        setupDefaultHeaders(request);
+
+        Intent intent = new Intent(context, GosNetworkService.class);
+        intent.putExtra(GosNetworkService.NetworkContract.KEY_REQUEST, gson.toJson(request, GosRequest.class));
+
+        InitPaymentReceiver receiver = new InitPaymentReceiver(listener);
+        IntentFilter intentFilter = new IntentFilter(GosNetworkService.NetworkContract.ACTION_INIT_PAYMENT);
+
+        LocalBroadcastManager.getInstance(context).registerReceiver(receiver, intentFilter);
+
+        context.startService(intent);
+
+    }
+
 
     private void setupDefaultHeaders(GosRequest request) {
 
@@ -246,5 +269,7 @@ public final class GosNetworkManager {
             Logger.LOGNET(tmp.toString());
         }
     }
+
+
 }
 

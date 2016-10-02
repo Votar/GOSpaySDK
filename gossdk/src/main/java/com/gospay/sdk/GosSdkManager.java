@@ -12,8 +12,10 @@ import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.listeners.GosRemoveCardListener;
 import com.gospay.sdk.api.request.models.card.CardFields;
 import com.gospay.sdk.api.request.models.card.RemoveCardParameter;
+import com.gospay.sdk.api.request.models.payment.GosDeviceInfo;
 import com.gospay.sdk.api.request.models.payment.confirm.ConfirmationPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
+import com.gospay.sdk.api.request.models.payment.init.InitPaymentWithCardParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.request.models.payment.status.GetPaymentStatusParameter;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
@@ -188,6 +190,15 @@ public final class GosSdkManager {
         GetPaymentStatusParameter parameter = new GetPaymentStatusParameter(payment.getId());
 
         networkManager.getPaymentStatus(context, parameter, listener);
+    }
+
+    public void payWithCard(Context context, CardFields card, PaymentFields paymentFields, GosInitPaymentListener listener){
+
+        GosDeviceInfo deviceInfo = new GosDeviceInfo(context);
+
+        InitPaymentWithCardParameter parameter = new InitPaymentWithCardParameter(card, paymentFields, deviceInfo);
+
+        networkManager.initPaymentWithCard(context, parameter, listener);
     }
 
 

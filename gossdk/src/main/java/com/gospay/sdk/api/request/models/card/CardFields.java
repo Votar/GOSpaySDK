@@ -9,13 +9,11 @@ import com.gospay.sdk.util.CreditCardValidator;
 /**
  * Created by bertalt on 30.08.16.
  */
-public final class CardFields {
+public final class  CardFields {
 
 
     private long number;
     private String expire;
-
-
     private String cvvCode;
     private String alias;
 

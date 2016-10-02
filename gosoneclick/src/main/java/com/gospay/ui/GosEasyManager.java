@@ -8,16 +8,12 @@ import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.listeners.GosSelectCardListener;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
-import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
 import com.gospay.sdk.exceptions.GosInvalidPaymentFieldsException;
 import com.gospay.sdk.storage.GosStorage;
 import com.gospay.sdk.util.Parser;
 import com.gospay.ui.card.add.AddCardDialog;
 import com.gospay.ui.card.select.SelectCardDialog;
 import com.gospay.ui.payment.PaymentProcessingActivity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by bertalt on 01.09.16.
@@ -28,9 +24,9 @@ public final class GosEasyManager {
     private GosNetworkManager networkManager;
     private static GosEasyManager ourInstance;
 
-    private GosEasyManager(android.support.v4.app.FragmentActivity context) {
+    private GosEasyManager(FragmentActivity context) {
 
-        GosStorage storage = GosStorage.newInstance(context);
+        GosStorage.newInstance(context);
         networkManager = GosNetworkManager.newInstance(context);
 
     }

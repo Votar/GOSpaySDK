@@ -69,13 +69,15 @@ public final class GosStorage {
         } catch (PackageManager.NameNotFoundException | NullPointerException e) {
             e.printStackTrace();
         }
-        Bundle bundle = ai.metaData;
-        String mApiKey = bundle.getString("com.gospay.sdk.V1");
 
-        if (TextUtils.isEmpty(mApiKey))
-            throw new GosSdkException("Cannot find GOS API KEY ");
+        try {
+            Bundle bundle = ai.metaData;
+            String mApiKey = bundle.getString("com.gospay.sdk.V1");
+            prefStorage.edit().putString(StorageContract.KEY_API_KEY, mApiKey).commit();
+        }catch (NullPointerException npe) {
+            throw new GosSdkException("Cannot find com.gospay.sdk.V1 in your AndroidManifest");
+        }
 
-        prefStorage.edit().putString(StorageContract.KEY_API_KEY, mApiKey).commit();
     }
 
 

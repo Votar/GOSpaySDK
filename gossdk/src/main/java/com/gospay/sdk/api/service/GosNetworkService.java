@@ -89,6 +89,7 @@ public class GosNetworkService extends IntentService {
                     broadcastIntent = new Intent(NetworkContract.ACTION_ADD_CARD)
                             .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));
                     break;
+                case GosServerApi.GOS_REQUESTS.INIT_PAYMENT_WITH_CARD:
                 case GosServerApi.GOS_REQUESTS.INIT_PAYMENT:
                     broadcastIntent = new Intent(NetworkContract.ACTION_INIT_PAYMENT)
                             .putExtra(NetworkContract.KEY_RESPONSE, gson.toJson(response, GosResponse.class));

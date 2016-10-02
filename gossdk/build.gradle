@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-
+apply plugin: 'maven-publish'
 android {
     compileSdkVersion 23
     buildToolsVersion "24.0.0"
@@ -25,4 +25,33 @@ dependencies {
     compile 'com.android.support:support-v4:23.4.0'
     compile 'com.google.code.gson:gson:2.6.1'
 
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId 'net.gospay.sdk' //You can either define these here or get them from project conf elsewhere
+            artifactId 'api'
+            version '0.0.1-alpha'
+            artifact "$buildDir/outputs/aar/gossdk-debug.aar" //aar artifact you want to publish
+
+            //generate pom nodes for dependencies
+            pom.withXml {
+                def dependenciesNode = asNode().appendNode('dependencies')
+                configurations.compile.allDependencies.each { dependency ->
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', dependency.group)
+                    dependencyNode.appendNode('artifactId', dependency.name)
+                    dependencyNode.appendNode('version', dependency.version)
+                }
+            }
+        }
+    }
+
+    //publish to filesystem repo
+    repositories{
+        maven {
+            url "$buildDir/repo"
+        }
+    }
 }

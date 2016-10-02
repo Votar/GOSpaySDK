@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="error_network_connection">Не соединения с сервером GOS</string>
+    <string name="error_network_connection">Нет соединения с сервером GOS</string>
 
 </resources>

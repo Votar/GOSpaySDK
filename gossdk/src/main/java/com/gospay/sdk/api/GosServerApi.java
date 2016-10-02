@@ -27,6 +27,6 @@ public interface GosServerApi {
         String CONFIRM_PAYMENT = "payment/confirm";
         String GET_PAYMENT_STATUS = "payment/status";
         String REMOVE_CARD = "cards/remove";
+        String INIT_PAYMENT_WITH_CARD = "payWithCard";
     }
-
 }

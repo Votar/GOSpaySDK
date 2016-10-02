@@ -41,11 +41,6 @@ public class GosDeviceInfo {
     private String networkType;
 
     public GosDeviceInfo(Context context) {
-
-       /*
-        mWifiConnectivity = new GosDeviceInfo.WifiConnectivity(
-                (WifiManager) context.getSystemService(Context.WIFI_SERVICE)
-        );*/
         {
             String androidID = "unknown";
             try {

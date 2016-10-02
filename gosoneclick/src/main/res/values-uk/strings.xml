@@ -8,7 +8,6 @@
     <string name="error_invalid_cvv">Перевірте CVV</string>
     <string name="error_invalid_expire_month">Невірний місяць</string>
     <string name="error_invalid_expire_year">Невірний рік</string>
-    <string name="error_network_connection">Немає звязку з сермером GOS</string>
     <string name="error_token_is_empty">Ідентифікатор зв’язку</string>
     <string name="hint_select_card">Ви повинні обрати карту</string>
     <string name="label_order_id">Замовлення:</string>

@@ -60,6 +60,7 @@ public class InitPaymentFragment extends Fragment {
     private View cardPickerView;
     private InfinitePagerAdapter infinitePagerAdapter;
     private View myView;
+    private boolean shouldSetupRecyclerView;
 
     public interface InitContract {
         String KEY_PAYMENT_FIELDS = "ikpf";
@@ -92,10 +93,13 @@ public class InitPaymentFragment extends Fragment {
             cardProgressBar = myView.findViewById(R.id.init_select_card_progress);
 
             btnConfirm.setOnClickListener(onClickPay);
-
-            bindView();
-            setupView();
         }
+        bindView();
+
+        if (shouldSetupRecyclerView)
+            setupRecycler();
+        else
+            setupView();
         return myView;
 
     }
@@ -124,26 +128,33 @@ public class InitPaymentFragment extends Fragment {
             networkManager.getCardList(getActivity(), new GosGetCardListListener() {
                 @Override
                 public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
-                    setupRecycler(cardList);
+
+                    listCards.clear();
+                    listCards.addAll(cardList);
+
+                    setupRecycler();
                 }
 
                 @Override
                 public void onGetCardListFailure(String message) {
 
                     listCards.clear();
-                    setupRecycler(listCards);
+                    setupRecycler();
                 }
             });
 
         }
     }
 
-    private void setupRecycler(List<CardViewModel> cardList) {
+    private void setupRecycler() {
+
+        if (!isResumed()) {
+            shouldSetupRecyclerView = true;
+            return;
+        }
 
         cardPickerView.setVisibility(View.VISIBLE);
 
-        listCards.clear();
-        listCards.addAll(cardList);
         PaymentCardsPagerAdapter adapter = new PaymentCardsPagerAdapter(listCards);
 
         infinitePagerAdapter = new InfinitePagerAdapter(adapter);
@@ -252,7 +263,7 @@ public class InitPaymentFragment extends Fragment {
                         @Override
                         public void onSuccessAddCard(CardViewModel card) {
                             listCards.add(card);
-                            setupRecycler(listCards);
+                            setupRecycler();
                         }
 
                         @Override

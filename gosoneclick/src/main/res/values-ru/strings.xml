@@ -8,7 +8,6 @@
     <string name="error_invalid_cvv">Проверьте CVV</string>
     <string name="error_invalid_expire_month">Неверный месяц</string>
     <string name="error_invalid_expire_year">Неверный год</string>
-    <string name="error_network_connection">Не соединения с сервером GOS</string>
     <string name="error_token_is_empty">Идентификатор сессии отсутствует</string>
     <string name="hint_select_card">Вы должны выбрать карту</string>
     <string name="label_order_id">Заказ:</string>
