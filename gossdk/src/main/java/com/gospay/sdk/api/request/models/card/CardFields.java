@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import com.gospay.sdk.exceptions.GosInvalidCardFieldsException;
 import com.gospay.sdk.util.CreditCardValidator;
 
+import java.util.Locale;
+
 
 /**
  * Created by bertalt on 30.08.16.
@@ -25,6 +27,16 @@ public final class  CardFields {
         this.alias = alias;
     }
 
+    /**
+     *
+     * @param cardNumber sixteen digits. We supports VISA, MasterCard and Maestro
+     * @param expiryMonth Two
+     * @param expiryYear
+     * @param cvv
+     * @param cardName
+     * @return
+     * @throws GosInvalidCardFieldsException
+     */
     public static CardFields create(long cardNumber, String expiryMonth, String expiryYear, String cvv, @Nullable String cardName) throws GosInvalidCardFieldsException {
 
 //        String message;
@@ -53,7 +65,10 @@ public final class  CardFields {
             throw new GosInvalidCardFieldsException(String.format("CVV %1$3s is not valid", cvv), GosInvalidCardFieldsException.GosInputField.CVV);
         }
 
-        return new CardFields(cardNumber, expiryMonth+expiryYear, cvv, cardName);
+        String expireDate = String.format(Locale.ENGLISH,
+                "%1$02d%2$02d",Integer.valueOf(expiryMonth),Integer.valueOf(expiryYear));
+
+        return new CardFields(cardNumber,expireDate , cvv, cardName);
     }
 
     public String getAlias() {

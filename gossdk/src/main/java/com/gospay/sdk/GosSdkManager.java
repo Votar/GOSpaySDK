@@ -113,15 +113,14 @@ public final class GosSdkManager {
 
     }
 
-    public void removeCard(Context context, CardViewModel card, GosRemoveCardListener listener){
+    public void removeCard(Context context, CardViewModel card, GosRemoveCardListener listener) {
 
         RemoveCardParameter parameter = new RemoveCardParameter(card);
 
-        networkManager.removeCard(context,parameter, listener);
+        networkManager.removeCard(context, parameter, listener);
     }
 
     /**
-     *
      * @param activity
      * @param listener
      */
@@ -147,9 +146,9 @@ public final class GosSdkManager {
     /**
      * Executes initialization of payment. This action used to begin of payment processing.
      *
-     * @param card                {@link CardViewModel} with UID of card
-     * @param paymentFields       {@link PaymentFields} with payment details
-     * @param listener {@link GosInitPaymentListener} listener to return result by callback
+     * @param card          {@link CardViewModel} with UID of card
+     * @param paymentFields {@link PaymentFields} with payment details
+     * @param listener      {@link GosInitPaymentListener} listener to return result by callback
      */
     public void initPayment(Context context, CardViewModel card, PaymentFields paymentFields, GosInitPaymentListener listener) {
 
@@ -159,14 +158,13 @@ public final class GosSdkManager {
     }
 
 
-
     /**
      * Executes confirmation of payment. This method usually call after {@link #initPayment(Context, CardViewModel, PaymentFields, GosInitPaymentListener) initPayment}
      * to continue of payment processing
      *
      * @param createdPayment with Id of GOSPAY {@link GosPayment}
-     * @param cvv                 CVV security code of card
-     * @param listener            {@link GosConfirmationPaymentListener} listener to return result by callback
+     * @param cvv            CVV security code of card
+     * @param listener       {@link GosConfirmationPaymentListener} listener to return result by callback
      */
     public void confirmPayment(Context context, GosPayment createdPayment, String cvv, GosConfirmationPaymentListener listener) throws GosInvalidCardFieldsException {
 
@@ -192,7 +190,15 @@ public final class GosSdkManager {
         networkManager.getPaymentStatus(context, parameter, listener);
     }
 
-    public void payWithCard(Context context, CardFields card, PaymentFields paymentFields, GosInitPaymentListener listener){
+    /**
+     * Executes initialization of payment with card
+     *
+     * @param context
+     * @param card          {@link CardFields} with card data
+     * @param paymentFields {@link PaymentFields} with payment details
+     * @param listener      listener to return result by callback
+     */
+    public void payWithCard(Context context, CardFields card, PaymentFields paymentFields, GosInitPaymentListener listener) {
 
         GosDeviceInfo deviceInfo = new GosDeviceInfo(context);
 
