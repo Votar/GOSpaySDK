@@ -24,4 +24,17 @@ public class ConfirmationPaymentParameter {
     public String getCvv() {
         return tp.getCvvCode();
     }
+
+    class TransientPropertyModel {
+
+        private String cvvCode;
+
+        public TransientPropertyModel(String cvvCode) {
+            this.cvvCode = cvvCode;
+        }
+
+        public String getCvvCode() {
+            return cvvCode;
+        }
+    }
 }

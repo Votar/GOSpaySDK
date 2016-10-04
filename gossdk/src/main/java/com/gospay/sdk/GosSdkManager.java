@@ -31,7 +31,7 @@ import java.util.List;
 
 /**
  * Created by bertalt on 01.09.16.
- * Main class for sdk users.
+ * Main class in SDK
  */
 public final class GosSdkManager {
 
@@ -40,7 +40,7 @@ public final class GosSdkManager {
     private List<CardViewModel> cardList = new ArrayList<>();
 
     /**
-     * Static creator for SDK manager
+     * Static creator for SDK manager. Start point to use GOS SDK.
      *
      * @param context
      * @return {@link GosSdkManager}
@@ -76,38 +76,20 @@ public final class GosSdkManager {
 
     }
 
-    private GosSdkManager(FragmentActivity context, boolean cacheCards) {
-        this(context);
-
-        if (cacheCards)
-            getCardList(context, new GosGetCardListListener() {
-                @Override
-                public void onGetCardListSuccess(ArrayList<CardViewModel> cardList) {
-                    ourInstance.cardList.addAll(cardList);
-                }
-
-                @Override
-                public void onGetCardListFailure(String message) {
-                    Logger.LOGD(message);
-                }
-            });
-
-    }
-
     /**
      * Execute request to add card. Result of operation will return in {@link GosAddCardListener} callback
      *
-     * @param cardNumber
-     * @param expireMonth
-     * @param expiryYear
-     * @param cvv
-     * @param cardAlias
+     * @param cardNumber  sixteen digits. We supports VISA, MasterCard and Maestro
+     * @param expiryMonth number of month [01-12]
+     * @param expiryYear  two last digits of expiry year
+     * @param cvv         three digits of security code
+     * @param cardAlias   card alias
      * @param listener
      * @throws GosInvalidCardFieldsException
      */
-    public void addCard(Context context, long cardNumber, String expireMonth, String expiryYear, String cvv, String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
+    public void addCard(Context context, long cardNumber, String expiryMonth, String expiryYear, String cvv, String cardAlias, final GosAddCardListener listener) throws GosInvalidCardFieldsException {
 
-        final CardFields cardFields = CardFields.create(cardNumber, expireMonth, expiryYear, cvv, cardAlias);
+        final CardFields cardFields = CardFields.create(cardNumber, expiryMonth, expiryYear, cvv, cardAlias);
 
         networkManager.addCard(context, cardFields, listener);
 
@@ -118,16 +100,6 @@ public final class GosSdkManager {
         RemoveCardParameter parameter = new RemoveCardParameter(card);
 
         networkManager.removeCard(context, parameter, listener);
-    }
-
-    /**
-     * @param activity
-     * @param listener
-     */
-    public void getCardList(FragmentActivity activity, GosGetCardListListener listener) {
-
-        networkManager.getCardList(activity, listener);
-
     }
 
     /**
@@ -180,7 +152,7 @@ public final class GosSdkManager {
     /**
      * Used to track payment status by GOSPAY {@link GosPayment} object with payment description
      *
-     * @param payment
+     * @param payment  {@link GosPayment} model payment which need to track
      * @param listener {@link GosGetPaymentStatusListener}  listener to return result by callback
      */
     public void getPaymentStatus(Context context, GosPayment payment, GosGetPaymentStatusListener listener) {

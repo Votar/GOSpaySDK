@@ -9,6 +9,7 @@ import java.util.Currency;
 
 /**
  * Created by bertalt on 08.09.16.
+ * Model to serialization payment description to GSON
  */
 public class PaymentFields {
 
@@ -17,6 +18,15 @@ public class PaymentFields {
     private String description;
     private String order;
 
+    /**
+     *
+     * @param amount value to payment
+     * @param currency In order ISO 4217. For example "USD" or "UAH"
+     * @param description Short comment about payment
+     * @param order Unique value of your order for statistic
+     * @return
+     * @throws GosInvalidPaymentFieldsException
+     */
     public static PaymentFields create(double amount, String currency, String description, String order) throws GosInvalidPaymentFieldsException{
 
         if(!PaymentFieldsValidator.isPriceValid(amount))

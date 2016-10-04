@@ -10,6 +10,7 @@ import java.util.Locale;
 
 /**
  * Created by bertalt on 30.08.16.
+ * Model to serialization card data to GSON
  */
 public final class  CardFields {
 
@@ -30,10 +31,10 @@ public final class  CardFields {
     /**
      *
      * @param cardNumber sixteen digits. We supports VISA, MasterCard and Maestro
-     * @param expiryMonth Two
-     * @param expiryYear
-     * @param cvv
-     * @param cardName
+     * @param expiryMonth number of month [01-12]
+     * @param expiryYear two last digits of expiry year
+     * @param cvv three digits of security code
+     * @param cardName card alias
      * @return
      * @throws GosInvalidCardFieldsException
      */
