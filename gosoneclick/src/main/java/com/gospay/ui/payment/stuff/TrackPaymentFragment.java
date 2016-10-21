@@ -1,4 +1,4 @@
-package com.gospay.ui.payment.fragment;
+package com.gospay.ui.payment.stuff;
 
 import android.content.DialogInterface;
 import android.os.Build;

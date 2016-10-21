@@ -1,15 +1,13 @@
-package com.gospay.ui.payment.fragment;
+package com.gospay.ui.payment.stuff;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -24,8 +22,6 @@ import com.gospay.sdk.api.listeners.GosInitPaymentListener;
 import com.gospay.sdk.api.request.models.payment.init.InitPaymentParameter;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
-import com.gospay.sdk.exceptions.GosSdkException;
-import com.gospay.ui.card.add.AddCardDialog;
 import com.gospay.ui.payment.PaymentProcessingActivity;
 import com.gospay.ui.widget.InfinitePagerAdapter;
 import com.gospay.ui.widget.InfiniteViewPager;

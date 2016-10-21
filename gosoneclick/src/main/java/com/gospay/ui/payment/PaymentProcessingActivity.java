@@ -2,26 +2,15 @@ package com.gospay.ui.payment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.Toolbar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gospay.sdk.api.listeners.GosAddCardListener;
 import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
-import com.gospay.ui.GosEasyManager;
 import com.gospay.ui.R;
-import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
-import com.gospay.sdk.exceptions.GosSdkException;
 import com.gospay.ui.card.add.AddCardActivity;
-import com.gospay.ui.card.add.AddCardFragment;
-import com.gospay.ui.payment.fragment.InitPaymentFragment;
+import com.gospay.ui.payment.stuff.InitPaymentFragment;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
 
