@@ -37,7 +37,7 @@ public class ConfirmPaymentFragment extends Fragment {
 
     public static final String KEY_PAYLOAD = "bundle_key_payload";
     public static final String KEY_CARD_VIEW = "bundle_key_card_view";
-    public static final String KEY_PAYMENT_FIELDS = "bundle_key_payment_fields";
+//    public static final String KEY_PAYMENT_FIELDS = "bundle_key_payment_fields";
     public static final String TAG = ConfirmPaymentFragment.class.getSimpleName();
     private TextView tvCardMask, tvCardAlias, tvPaymentAmount, tvTotalAmount, tvPaymentCurrency, tvTotalCurrency;
     private EditText etCvv;

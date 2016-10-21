@@ -16,18 +16,18 @@ public class PaymentFields {
     private double price;
     private Currency currency;
     private String description;
-    private String order;
+    private String orderId;
 
     /**
      *
      * @param amount value to payment
-     * @param currency In order ISO 4217. For example "USD" or "UAH"
+     * @param currency In orderId ISO 4217. For example "USD" or "UAH"
      * @param description Short comment about payment
-     * @param order Unique value of your order for statistic
+     * @param orderId Unique value of your orderId for statistic
      * @return
      * @throws GosInvalidPaymentFieldsException
      */
-    public static PaymentFields create(double amount, String currency, String description, String order) throws GosInvalidPaymentFieldsException{
+    public static PaymentFields create(double amount, String currency, String description, String orderId) throws GosInvalidPaymentFieldsException{
 
         if(!PaymentFieldsValidator.isPriceValid(amount))
                 throw new GosInvalidPaymentFieldsException(String.format("Invalid price %1f", amount), GosInvalidPaymentFieldsException.GosPaymentField.PRICE);
@@ -35,20 +35,20 @@ public class PaymentFields {
         if(!PaymentFieldsValidator.isCurrencyValid(currency))
             throw new GosInvalidPaymentFieldsException(String.format("Invalid currency %1s", currency), GosInvalidPaymentFieldsException.GosPaymentField.CURRENCY);
 
-        if(!PaymentFieldsValidator.isOrderIdValid(order))
-            throw new GosInvalidPaymentFieldsException(String.format("Invalid orderId %1s", order), GosInvalidPaymentFieldsException.GosPaymentField.ORDER_ID);
+        if(!PaymentFieldsValidator.isOrderIdValid(orderId))
+            throw new GosInvalidPaymentFieldsException(String.format("Invalid orderId %1s", orderId), GosInvalidPaymentFieldsException.GosPaymentField.ORDER_ID);
 
         if(!PaymentFieldsValidator.isDescriptionValid(description))
             throw new GosInvalidPaymentFieldsException(String.format("Invalid description %1s", description), GosInvalidPaymentFieldsException.GosPaymentField.DESCRIPTION);
 
-        return new PaymentFields(amount, currency, description, order);
+        return new PaymentFields(amount, currency, description, orderId);
     }
 
     private PaymentFields(double amount, String currency, String description, String order) {
         this.price = amount;
         this.currency = Currency.getInstance(currency);
         this.description = description;
-        this.order = order;
+        this.orderId = order;
     }
 
     public double getPrice() {
@@ -64,6 +64,6 @@ public class PaymentFields {
     }
 
     public String getOrder() {
-        return order;
+        return orderId;
     }
 }

@@ -166,15 +166,15 @@ public final class GosSdkManager {
      * Executes initialization of payment with card
      *
      * @param context
-     * @param card          {@link CardFields} with card data
+     * @param cardFields          {@link CardFields} with card data
      * @param paymentFields {@link PaymentFields} with payment details
      * @param listener      listener to return result by callback
      */
-    public void payWithCard(Context context, CardFields card, PaymentFields paymentFields, GosInitPaymentListener listener) {
+    public void payWithCard(Context context, CardFields cardFields, PaymentFields paymentFields, GosInitPaymentListener listener) {
 
         GosDeviceInfo deviceInfo = new GosDeviceInfo(context);
 
-        InitPaymentWithCardParameter parameter = new InitPaymentWithCardParameter(card, paymentFields, deviceInfo);
+        InitPaymentWithCardParameter parameter = new InitPaymentWithCardParameter(cardFields, paymentFields, deviceInfo);
 
         networkManager.initPaymentWithCard(context, parameter, listener);
     }

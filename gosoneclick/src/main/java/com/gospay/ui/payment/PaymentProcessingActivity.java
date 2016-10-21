@@ -2,13 +2,25 @@ package com.gospay.ui.payment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.Toolbar;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.gospay.sdk.api.listeners.GosAddCardListener;
+import com.gospay.sdk.api.response.models.messages.card.CardViewModel;
+import com.gospay.ui.GosEasyManager;
 import com.gospay.ui.R;
 import com.gospay.sdk.api.request.models.payment.init.PaymentFields;
 import com.gospay.sdk.exceptions.GosSdkException;
+import com.gospay.ui.card.add.AddCardActivity;
+import com.gospay.ui.card.add.AddCardFragment;
 import com.gospay.ui.payment.fragment.InitPaymentFragment;
 import com.gospay.sdk.util.Logger;
 import com.gospay.sdk.util.Parser;
@@ -17,33 +29,27 @@ import com.gospay.sdk.util.Parser;
 public class PaymentProcessingActivity extends AppCompatActivity {
 
     private static final String TAG = PaymentProcessingActivity.class.getName();
-
+    private int REQ_ADD_CARD =0x23;
     private String mTagCurrentFragment;
     private static String KEY_CURRENT_TAG = "instance_key_current_tag";
-    private PaymentFields paymentFields;
 
-
-    public interface PaymentContract {
-
-
-        String KEY_PAYMENT_FIELDS = "ikpf";
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payment_processing);
 
-        Intent args = getIntent();
-        if (args == null) throw new GosSdkException("Intent with fields is null");
-
-        paymentFields = Parser.getsInstance().fromJson(args.getStringExtra(PaymentContract.KEY_PAYMENT_FIELDS), PaymentFields.class);
-
-        if (paymentFields == null) throw new GosSdkException("GosPayment cannot be parsed");
 
         if (savedInstanceState == null)
-            showFirstFragment(getSupportFragmentManager());
+            showFirstFragment();
 
+    }
+
+    private void showFirstFragment() {
+        Fragment fragment = new InitPaymentFragment();
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.activity_payment_processing_fragment_container, fragment)
+                .commit();
     }
 
 
@@ -65,22 +71,37 @@ public class PaymentProcessingActivity extends AppCompatActivity {
 
     }
 
-    private void showFirstFragment(FragmentManager fm) {
+    private GosAddCardListener addCardListener;
+    public void startAddCardActivity(GosAddCardListener listener) {
 
         Logger.LOGD("Show first fragment");
 
+        addCardListener = listener;
+        Intent intent = new Intent(this, AddCardActivity.class);
+        startActivityForResult(intent, REQ_ADD_CARD);
+    }
 
-        Fragment fragment = new InitPaymentFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(InitPaymentFragment.InitContract.KEY_PAYMENT_FIELDS, Parser.getsInstance().toJson(paymentFields, PaymentFields.class));
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == REQ_ADD_CARD){
+            if(resultCode == RESULT_OK){
+                //Card has been added
+                //Received CardViewModel in ARG_CARD_VIEW_MODEL and saved PaymentFields in ARG_PAYMENT_FIELDS
 
-        fragment.setArguments(bundle);
+                String cardViewJson = data.getStringExtra(AddCardActivity.AddCardContract.ARG_CARD_VIEW_MODEL);
+                CardViewModel card = Parser.getsInstance().fromJson(cardViewJson, CardViewModel.class);
 
-        fm.beginTransaction().
-                replace(R.id.activity_payment_processing_fragment_container, fragment, InitPaymentFragment.TAG)
-                .commit();
+                //Send result to listener if need
+                if(addCardListener != null)
+                    addCardListener.onSuccessAddCard(card);
 
-        setTag(InitPaymentFragment.TAG);
+                Logger.LOGD("Card has been added "+card.getCardId());
+
+            }else{
+                //Error from server with message
+                Toast.makeText(this, getString(R.string.card_not_added), Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void setTag(String tag) {

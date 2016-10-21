@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.gospay.ui">
 
@@ -8,7 +9,17 @@
     <application>
         <activity
             android:name=".payment.PaymentProcessingActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:theme="@style/GosWhiteTheme" />
+        <activity
+            android:name=".card.add.AddCardActivity"
+            android:parentActivityName=".payment.PaymentProcessingActivity"
+            android:theme="@style/GosWhiteTheme">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".payment.PaymentProcessingActivity" />
+
+        </activity>
     </application>
+
 
 </manifest>

@@ -93,20 +93,25 @@ public final class GosStorage {
      */
     public boolean addCardWithCvv(int cardId, String cvv) {
 
-        if (prefStorage == null) throw new GosSdkException("Storage is null");
+        if (prefStorage == null) throw new GosSdkException("GosStorage is null");
 
         return prefStorage.edit().putString(String.valueOf(cardId), cvv).commit();
 
     }
 
+    /**
+     *
+     * @param cardId
+     * @return uid of card or empty string if cvv not found 
+     */
     public String getCvvByCardId(int cardId) {
 
-        if (prefStorage == null) throw new GosSdkException("Storage is null");
+        if (prefStorage == null) throw new GosSdkException("GosStorage is null");
 
         String cvv = prefStorage.getString(String.valueOf(cardId), DEFAULT_ID);
 
         if (cvv.equalsIgnoreCase(DEFAULT_ID)) {
-            return null;
+            return "";
         } else {
             return cvv;
         }

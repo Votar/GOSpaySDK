@@ -84,6 +84,9 @@ public final class GosNetworkManager {
         cookieManager = new CookieManager(new GosCookieStore(context), CookiePolicy.ACCEPT_ALL);
         CookieHandler.setDefault(cookieManager);
 
+        clearToken();
+
+
     }
 
     private void clearToken() {

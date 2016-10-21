@@ -34,11 +34,11 @@ public final class  CardFields {
      * @param expiryMonth number of month [01-12]
      * @param expiryYear two last digits of expiry year
      * @param cvv three digits of security code
-     * @param cardName card alias
+     * @param cardAlias card alias
      * @return
      * @throws GosInvalidCardFieldsException
      */
-    public static CardFields create(long cardNumber, String expiryMonth, String expiryYear, String cvv, @Nullable String cardName) throws GosInvalidCardFieldsException {
+    public static CardFields create(long cardNumber, String expiryMonth, String expiryYear, String cvv, @Nullable String cardAlias) throws GosInvalidCardFieldsException {
 
 //        String message;
 
@@ -69,7 +69,7 @@ public final class  CardFields {
         String expireDate = String.format(Locale.ENGLISH,
                 "%1$02d%2$02d",Integer.valueOf(expiryMonth),Integer.valueOf(expiryYear));
 
-        return new CardFields(cardNumber,expireDate , cvv, cardName);
+        return new CardFields(cardNumber,expireDate , cvv, cardAlias);
     }
 
     public String getAlias() {

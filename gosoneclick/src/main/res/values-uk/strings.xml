@@ -23,7 +23,7 @@
     <string name="text_expiry_date">Дійсний до</string>
     <string name="text_progress_dialog">Завантаження...</string>
     <string name="text_trouble_browser">\\t Ваш браузер може не підтримувати захищене SSL з\\\'єднання, що може ускладнити підтвердження платежу.\\n\\t <b>Рекомендуємо скористатися іншим браузером, наприклад: Chrome, Safari, Firefox або Opera</b></string>
-    <string name="title_init_payment">Ініціалізація</string>
+    <string name="title_payment_process">Ініціалізація</string>
     <string name="ui_btn_add">Підтвердити</string>
     <string name="ui_btn_cancel">Відміна</string>
 </resources>

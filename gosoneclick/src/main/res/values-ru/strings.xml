@@ -25,7 +25,7 @@
     <string name="text_list_is_empty">Список пуст</string>
     <string name="text_progress_dialog">Загрузка...</string>
     <string name="text_trouble_browser">\\tВаш браузер может не поддерживать защищенное SSL соединение, что затруднит подтверждение платежа. \\n\\t <b>Рекомендуем воспользоваться другим браузером, например: Chrome, Safari, Firefox или Opera</b></string>
-    <string name="title_init_payment">Инициализация</string>
+    <string name="title_payment_process">Инициализация</string>
     <string name="ui_btn_add">Подтвердить</string>
     <string name="ui_btn_cancel">Отмена</string>
 </resources>

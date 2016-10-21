@@ -3,4 +3,5 @@
     <integer name="max_length_card_number">19</integer>
     <integer name="max_length_date">2</integer>
     <integer name="max_length_cvv">3</integer>
+    <integer name="duration_fragment_animation">300</integer>
 </resources>

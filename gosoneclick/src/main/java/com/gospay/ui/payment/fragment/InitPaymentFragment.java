@@ -11,11 +11,11 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.gospay.sdk.api.response.models.messages.payment.GosPayment;
+import com.gospay.ui.GosEasyManager;
 import com.gospay.ui.R;
 import com.gospay.sdk.api.GosNetworkManager;
 import com.gospay.sdk.api.listeners.GosAddCardListener;
@@ -42,15 +42,15 @@ import java.util.List;
 public class InitPaymentFragment extends Fragment {
 
     public static String TAG = InitPaymentFragment.class.getSimpleName();
-    private TextView tvCurrency, tvDescr, tvAmount, tvOrderId;
+    //private TextView tvCurrency, tvDescr, tvAmount, tvOrderId;
     private ImageView ivLeft, ivRight;
     private CardViewModel selectedCard;
     private ImageButton btnConfirm;
-    private PaymentFields paymentFields;
+ //   private PaymentFields paymentFields;
     private GosPayment paymentInProgress;
     private View cardProgressBar;
     private ProgressBar requestProgress;
-    private LinearLayout payBlock;
+//    private LinearLayout payBlock;
     private List<CardViewModel> listCards = new ArrayList<>();
     private GosNetworkManager networkManager = GosNetworkManager.getInstance();
     //private RecyclerView recyclerView;
@@ -65,7 +65,6 @@ public class InitPaymentFragment extends Fragment {
     public interface InitContract {
         String KEY_PAYMENT_FIELDS = "ikpf";
     }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -88,7 +87,6 @@ public class InitPaymentFragment extends Fragment {
             ivRight.setOnClickListener(onClickRight);
             cardPickerView = myView.findViewById(R.id.init_recycler_card);
             requestProgress = (ProgressBar) myView.findViewById(R.id.init_request_progress);
-            payBlock = (LinearLayout) myView.findViewById(R.id.ll_pay_block);
             mPager = (InfiniteViewPager) myView.findViewById(R.id.payment_card_recycler);
             cardProgressBar = myView.findViewById(R.id.init_select_card_progress);
 
@@ -113,7 +111,7 @@ public class InitPaymentFragment extends Fragment {
 
     private void bindView() {
 
-        Bundle args = getArguments();
+        /*Bundle args = getArguments();
 
         if (args == null)
             throw new GosSdkException("No data to payment view");
@@ -121,7 +119,7 @@ public class InitPaymentFragment extends Fragment {
         paymentFields = Parser.getsInstance().fromJson(args.getString(InitContract.KEY_PAYMENT_FIELDS), PaymentFields.class);
 
         if (paymentFields == null)
-            throw new GosSdkException("Cannot parse bundle by key: " + InitContract.KEY_PAYMENT_FIELDS);
+            throw new GosSdkException("Cannot parse bundle by key: " + InitContract.KEY_PAYMENT_FIELDS);*/
 
 
         if (mPager.getAdapter() == null) {
@@ -177,6 +175,7 @@ public class InitPaymentFragment extends Fragment {
             if (listCards != null && !listCards.isEmpty())
                 selectedCard = listCards.get(mPager.getCurrentItem());
 
+            PaymentFields paymentFields = GosEasyManager.getInstance().getCurrentPayment();
             if (selectedCard != null) {
                 InitPaymentParameter parameter = new InitPaymentParameter(selectedCard.getCardId(), paymentFields);
                 GosNetworkManager.getInstance().initPayment(getContext(), parameter, gosInitPaymentListener);
@@ -223,13 +222,17 @@ public class InitPaymentFragment extends Fragment {
     private void showConfirmFragment() {
         Gson gson = Parser.getsInstance();
         Bundle args = new Bundle();
-        args.putString(ConfirmPaymentFragment.KEY_PAYMENT_FIELDS, gson.toJson(paymentFields, PaymentFields.class));
+//        args.putString(ConfirmPaymentFragment.KEY_PAYMENT_FIELDS, gson.toJson(paymentFields, PaymentFields.class));
         args.putString(ConfirmPaymentFragment.KEY_PAYLOAD, gson.toJson(paymentInProgress, GosPayment.class));
         args.putString(ConfirmPaymentFragment.KEY_CARD_VIEW, gson.toJson(selectedCard, CardViewModel.class));
         Fragment fragment = new ConfirmPaymentFragment();
         fragment.setArguments(args);
         getFragmentManager().beginTransaction()
                 .addToBackStack(InitPaymentFragment.TAG)
+                .setCustomAnimations(R.anim.enter_from_right,
+                        R.anim.exit_to_left,
+                        R.anim.enter_from_left,
+                        R.anim.exit_to_right)
                 .replace(R.id.activity_payment_processing_fragment_container, fragment, ConfirmPaymentFragment.TAG)
                 .commit();
         ((PaymentProcessingActivity) getActivity()).setTag(ConfirmPaymentFragment.TAG);
@@ -259,20 +262,7 @@ public class InitPaymentFragment extends Fragment {
                     mPager.setVisibility(View.GONE);
                     cardProgressBar.setVisibility(View.GONE);
 //                    emptyView.setVisibility(View.VISIBLE);
-                    DialogFragment addCardDialog = AddCardDialog.newInstance(new GosAddCardListener() {
-                        @Override
-                        public void onSuccessAddCard(CardViewModel card) {
-                            listCards.add(card);
-                            setupRecycler();
-                        }
-
-                        @Override
-                        public void onFailureAddCard(String message) {
-                            Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-                    addCardDialog.show(getFragmentManager(), AddCardDialog.TAG);
+                    addCard();
                 }
             } else {
                 if (mPager != null && cardProgressBar != null) {  //emptyView != null &&
@@ -282,6 +272,23 @@ public class InitPaymentFragment extends Fragment {
                 }
             }
         }
+    }
+
+    private void addCard() {
+
+
+        ((PaymentProcessingActivity)getActivity()).startAddCardActivity(new GosAddCardListener() {
+            @Override
+            public void onSuccessAddCard(CardViewModel card) {
+                listCards.add(card);
+                setupRecycler();
+            }
+
+            @Override
+            public void onFailureAddCard(String message) {
+
+            }
+        });
     }
 
 
